@@ -18,7 +18,7 @@ class TimezoneTest extends CommonTestClass
     public function testServiceString(): void
     {
         $data = $this->getLib()->timezone('10.1, 20.2', 1234567890);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/timezone/json?key=test&location=10.1%2C%2020.2&timestamp=1234567890', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/timezone/json?key=test&location=10.1%2C%2020.2&timestamp=1234567890', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -29,7 +29,7 @@ class TimezoneTest extends CommonTestClass
     public function testServiceLatLngIndexed(): void
     {
         $data = $this->getLib()->timezone([10.7, 11.4], 1234567);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/timezone/json?key=test&location=10.70000000%2C11.40000000&timestamp=1234567', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/timezone/json?key=test&location=10.70000000%2C11.40000000&timestamp=1234567', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -40,7 +40,7 @@ class TimezoneTest extends CommonTestClass
     public function testServiceLatLngNamed(): void
     {
         $data = $this->getLib()->timezone(['lat' => 20.5, 'lng' => 22.8], 1234567);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/timezone/json?key=test&location=20.50000000%2C22.80000000&timestamp=1234567', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/timezone/json?key=test&location=20.50000000%2C22.80000000&timestamp=1234567', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }

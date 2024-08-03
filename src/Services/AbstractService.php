@@ -54,11 +54,23 @@ abstract class AbstractService
      */
     protected function getWithDefaults(string $path, array $params): RequestInterface
     {
+        $current = parse_url($path);
+        $url = $this->request->getUri()
+            ->withScheme($current['scheme'])
+            ->withUserInfo('')
+            ->withHost($current['host'])
+            ->withPort(null)
+            ->withPath($current['path'])
+            ->withQuery('')
+            ->withFragment('')
+        ;
+        if (!empty($params)) {
+            $url = $url->withQuery(http_build_query($params, '', null, PHP_QUERY_RFC3986));
+        }
         return $this->request
             ->withMethod('GET')
-            ->withRequestTarget(
-                $path . (empty($params) ? '' : '?' . http_build_query($params, '', null, PHP_QUERY_RFC3986))
-            );
+            ->withUri($url)
+        ;
     }
 
     /**

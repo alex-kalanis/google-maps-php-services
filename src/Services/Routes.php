@@ -45,9 +45,8 @@ class Routes extends AbstractService
         }
         // @codeCoverageIgnoreEnd
 
-        return $this->request
+        return $this->getWithDefaults('https://routes.googleapis.com/directions/v2:computeRoutes', [])
             ->withMethod('POST')
-            ->withRequestTarget('https://routes.googleapis.com/directions/v2:computeRoutes')
             ->withHeader('X-Goog-FieldMask', 'routes.duration,routes.distanceMeters,routes.legs,geocodingResults')
             ->withHeader('X-Goog-Api-Key', $this->auth->getKey())
             ->withBody(new Body($encoded));

@@ -18,7 +18,7 @@ class NearbyTest extends CommonTestClass
     public function testService(): void
     {
         $data = $this->getLib()->nearby('foo', [], 10.2, 'bar');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=test&keyword=foo&radius=10.2&type=bar', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=test&keyword=foo&radius=10.2&type=bar', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -32,7 +32,7 @@ class NearbyTest extends CommonTestClass
     public function testServiceLatLng(string $result, array $latLng): void
     {
         $data = $this->getLib()->nearby('', $latLng);
-        $this->assertEquals($result, $data->getRequestTarget());
+        $this->assertEquals($result, strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }

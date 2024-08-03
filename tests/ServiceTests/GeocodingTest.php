@@ -18,7 +18,7 @@ class GeocodingTest extends CommonTestClass
     public function testServiceGeocode(): void
     {
         $data = $this->getLib()->geocode('somewhere in the land');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&address=somewhere%20in%20the%20land', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&address=somewhere%20in%20the%20land', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -29,7 +29,7 @@ class GeocodingTest extends CommonTestClass
     public function testServiceReverse(): void
     {
         $data = $this->getLib()->reverseGeocode('you do not know where');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&place_id=you%20do%20not%20know%20where', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&place_id=you%20do%20not%20know%20where', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -40,7 +40,7 @@ class GeocodingTest extends CommonTestClass
     public function testServiceLatLngIndexed(): void
     {
         $data = $this->getLib()->reverseGeocode([10.7, 11.4]);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&latlng=10.70000000%2C11.40000000', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&latlng=10.70000000%2C11.40000000', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -51,7 +51,7 @@ class GeocodingTest extends CommonTestClass
     public function testServiceLatLngNamed(): void
     {
         $data = $this->getLib()->reverseGeocode(['lat' => 20.5, 'lng' => 22.8]);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&latlng=20.50000000%2C22.80000000', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/geocode/json?key=test&latlng=20.50000000%2C22.80000000', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }

@@ -18,7 +18,7 @@ class FindPlaceTest extends CommonTestClass
     public function testService(): void
     {
         $data = $this->getLib()->findPlace('foo', 'bar');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -29,7 +29,7 @@ class FindPlaceTest extends CommonTestClass
     public function testServiceFields(): void
     {
         $data = $this->getLib()->findPlace('foo', 'bar', ['rating', 'witchcraft', 'photo', 'issues']);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&fields=photo%2Crating', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&fields=photo%2Crating', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -43,7 +43,7 @@ class FindPlaceTest extends CommonTestClass
     public function testServiceBias(string $result, array $bias): void
     {
         $data = $this->getLib()->findPlace('foo', 'bar', [], $bias);
-        $this->assertEquals($result, $data->getRequestTarget());
+        $this->assertEquals($result, strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }

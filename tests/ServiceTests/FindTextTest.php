@@ -18,7 +18,7 @@ class FindTextTest extends CommonTestClass
     public function testService(): void
     {
         $data = $this->getLib()->findText('foo', 5, [], 8, -3, true, 'Italy', 'stadium');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/textsearch/json?key=test&query=foo&radius=5.00&maxprice=8&minprice=-3&opennow=true&region=it&type=stadium', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/textsearch/json?key=test&query=foo&radius=5.00&maxprice=8&minprice=-3&opennow=true&region=it&type=stadium', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -33,7 +33,7 @@ class FindTextTest extends CommonTestClass
     public function testServiceBias(string $result, float $radius, array $location): void
     {
         $data = $this->getLib()->findText('foo', $radius, $location);
-        $this->assertEquals($result, $data->getRequestTarget());
+        $this->assertEquals($result, strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }

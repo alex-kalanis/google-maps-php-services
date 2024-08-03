@@ -18,7 +18,7 @@ class PlaceDetailsTest extends CommonTestClass
     public function testService(): void
     {
         $data = $this->getLib()->placeDetails('foo', [], 'Greece', false, 'Newest');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json?key=test&place_id=foo&region=gr&reviews_no_translations=true&reviews_sort=newest', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json?key=test&place_id=foo&region=gr&reviews_no_translations=true&reviews_sort=newest', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }
@@ -29,7 +29,7 @@ class PlaceDetailsTest extends CommonTestClass
     public function testServiceFields(): void
     {
         $data = $this->getLib()->placeDetails('foo', ['rating', 'witchcraft', 'photo', 'issues']);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json?key=test&place_id=foo&fields=photo%2Crating', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json?key=test&place_id=foo&fields=photo%2Crating', strval($data->getUri()));
         $this->assertNotEmpty($data->getBody());
         $this->assertEmpty($data->getBody()->getContents());
     }

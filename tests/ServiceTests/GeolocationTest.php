@@ -22,7 +22,7 @@ class GeolocationTest extends CommonTestClass
 
         $data = $lib->geolocate([10.7, 11.4, 'foo' => 'bar']);
         $this->assertEquals('POST', $data->getMethod());
-        $this->assertEquals('https://www.googleapis.com/geolocation/v1/geolocate?key=test', $data->getRequestTarget());
+        $this->assertEquals('https://www.googleapis.com/geolocation/v1/geolocate?key=test', strval($data->getUri()));
         $this->assertEquals('{"0":10.7,"1":11.4,"foo":"bar"}', $data->getBody()->getContents());
     }
 }

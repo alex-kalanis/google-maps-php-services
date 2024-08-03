@@ -19,7 +19,7 @@ class RoutesTest extends CommonTestClass
     {
         $data = $this->getLib()->computeRoutes([10.7, 11.4, 'foo' => 'bar',], []);
         $this->assertEquals('POST', $data->getMethod());
-        $this->assertEquals('https://routes.googleapis.com/directions/v2:computeRoutes', $data->getRequestTarget());
+        $this->assertEquals('https://routes.googleapis.com/directions/v2:computeRoutes', strval($data->getUri()));
         $this->assertEquals([
             'X-Goog-FieldMask' => ['routes.duration,routes.distanceMeters,routes.legs,geocodingResults'],
             'X-Goog-Api-Key' => ['test'],
@@ -34,7 +34,7 @@ class RoutesTest extends CommonTestClass
     {
         $data = $this->getLib('hk')->computeRoutes(['foo' => 'bar',], [10.7, 11.4,]);
         $this->assertEquals('POST', $data->getMethod());
-        $this->assertEquals('https://routes.googleapis.com/directions/v2:computeRoutes', $data->getRequestTarget());
+        $this->assertEquals('https://routes.googleapis.com/directions/v2:computeRoutes', strval($data->getUri()));
         $this->assertEquals([
             'X-Goog-FieldMask' => ['routes.duration,routes.distanceMeters,routes.legs,geocodingResults'],
             'X-Goog-Api-Key' => ['test'],

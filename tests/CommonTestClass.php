@@ -7,6 +7,7 @@ use Psr\Http\Message\MessageInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 
 /**
@@ -18,12 +19,116 @@ class CommonTestClass extends TestCase
 }
 
 
+class XUri implements UriInterface
+{
+    protected string $scheme = '';
+    protected string $host = '';
+    protected string $path = '';
+    protected string $query = '';
+
+    public function getScheme(): string
+    {
+        return $this->scheme;
+    }
+
+    public function getAuthority(): string
+    {
+        throw new \Exception('mock');
+    }
+
+    public function getUserInfo(): string
+    {
+        throw new \Exception('mock');
+    }
+
+    public function getHost(): string
+    {
+        return $this->host;
+    }
+
+    public function getPort(): ?int
+    {
+        throw new \Exception('mock');
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    public function getQuery(): string
+    {
+        return $this->query;
+    }
+
+    public function getFragment(): string
+    {
+        throw new \Exception('mock');
+    }
+
+    public function withScheme(string $scheme): UriInterface
+    {
+        $this->scheme = $scheme;
+        return $this;
+    }
+
+    public function withUserInfo(string $user, ?string $password = null): UriInterface
+    {
+        return $this;
+    }
+
+    public function withHost(string $host): UriInterface
+    {
+        $this->host = $host;
+        return $this;
+    }
+
+    public function withPort(?int $port): UriInterface
+    {
+        return $this;
+    }
+
+    public function withPath(string $path): UriInterface
+    {
+        $this->path = $path;
+        return $this;
+    }
+
+    public function withQuery(string $query): UriInterface
+    {
+        $this->query = $query;
+        return $this;
+    }
+
+    public function withFragment(string $fragment): UriInterface
+    {
+        return $this;
+    }
+
+    public function __toString(): string
+    {
+        return sprintf('%s%s%s%s',
+        empty($this->scheme) ? '' : $this->scheme . '://',
+            $this->host,
+            $this->path,
+            empty($this->query) ? '' : '?' . $this->query
+        );
+    }
+}
+
+
 class XRequest implements RequestInterface
 {
     protected string $method = 'get';
     protected string $target = '/';
     protected array $headers = [];
+    protected UriInterface $uri;
     protected StreamInterface|null $body = null;
+
+    public function __construct()
+    {
+        $this->uri = new XUri();
+    }
 
     public function getProtocolVersion(): string
     {
@@ -110,14 +215,15 @@ class XRequest implements RequestInterface
         return $this;
     }
 
-    public function getUri(): \Psr\Http\Message\UriInterface
+    public function getUri(): UriInterface
     {
-        throw new \Exception('mock');
+        return $this->uri;
     }
 
-    public function withUri(\Psr\Http\Message\UriInterface $uri, bool $preserveHost = false): RequestInterface
+    public function withUri(UriInterface $uri, bool $preserveHost = false): RequestInterface
     {
-        throw new \Exception('mock');
+        $this->uri = $uri;
+        return $this;
     }
 }
 

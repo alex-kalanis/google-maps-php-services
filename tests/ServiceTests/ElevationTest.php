@@ -19,7 +19,7 @@ class ElevationTest extends CommonTestClass
     {
         $lib = $this->getLib();
         $data = $lib->elevation('you do not know where');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/elevation/json?key=test&locations=you%20do%20not%20know%20where', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/elevation/json?key=test&locations=you%20do%20not%20know%20where', strval($data->getUri()));
         $this->assertEquals('', $data->getBody());
     }
 
@@ -29,7 +29,7 @@ class ElevationTest extends CommonTestClass
     public function testServiceLatLngIndexed(): void
     {
         $data = $this->getLib()->elevation([10.7, 11.4]);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/elevation/json?key=test&locations=10.70000000%2C11.40000000', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/elevation/json?key=test&locations=10.70000000%2C11.40000000', strval($data->getUri()));
         $this->assertEquals('', $data->getBody());
     }
 
@@ -39,7 +39,7 @@ class ElevationTest extends CommonTestClass
     public function testServiceLatLngNamed(): void
     {
         $data = $this->getLib()->elevation(['lat' => 20.5, 'lng' => 22.8]);
-        $this->assertEquals('https://maps.googleapis.com/maps/api/elevation/json?key=test&locations=20.50000000%2C22.80000000', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/elevation/json?key=test&locations=20.50000000%2C22.80000000', strval($data->getUri()));
         $this->assertEquals('', $data->getBody());
     }
 

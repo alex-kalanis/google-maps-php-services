@@ -20,7 +20,7 @@ class DistanceTest extends CommonTestClass
         $conf = ClientConfig::init('test');
         $lib = new Services\DistanceMatrix(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
         $data = $lib->distanceMatrix('you do not know where', 'you do not want to know');
-        $this->assertEquals('https://maps.googleapis.com/maps/api/distancematrix/json?key=test&origins=you%20do%20not%20know%20where&destinations=you%20do%20not%20want%20to%20know', $data->getRequestTarget());
+        $this->assertEquals('https://maps.googleapis.com/maps/api/distancematrix/json?key=test&origins=you%20do%20not%20know%20where&destinations=you%20do%20not%20want%20to%20know', strval($data->getUri()));
         $this->assertEquals('', $data->getBody());
     }
 }
