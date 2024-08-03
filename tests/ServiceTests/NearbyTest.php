@@ -4,7 +4,8 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ClientConfig;
+use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
 use kalanis\google_maps\Services;
 
@@ -16,33 +17,31 @@ class NearbyTest extends CommonTestClass
      */
     public function testService(): void
     {
-        $lib = new Services\Nearby(new ApiAuth('test'));
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/nearbysearch/json', $lib->getPath());
-        $this->assertEquals([
-            'keyword' => 'foo',
-            'radius' => 10.2,
-            'type' => 'bar',
-            'key' => 'test',
-        ], $lib->nearby('foo', [], 10.2, 'bar'));
+        $data = $this->getLib()->nearby('foo', [], 10.2, 'bar');
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=test&keyword=foo&radius=10.2&type=bar', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
-     * @param array<string, string> $result
+     * @param string $result
      * @param array<string|int, string> $latLng
      * @throws ServiceException
      * @dataProvider serviceLatLngProvider
      */
-    public function testServiceLatLng(array $result, array $latLng): void
+    public function testServiceLatLng(string $result, array $latLng): void
     {
-        $lib = new Services\Nearby(new ApiAuth('test'));
-        $this->assertEquals($result, $lib->nearby('', $latLng));
+        $data = $this->getLib()->nearby('', $latLng);
+        $this->assertEquals($result, $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     public static function serviceLatLngProvider(): array
     {
         return [
-            [['latlng' => '10.70000000,11.40000000', 'key' => 'test',], [10.7, 11.4]],
-            [['latlng' => '20.50000000,22.80000000', 'key' => 'test',], ['lat' => 20.5, 'lng' => 22.8]],
+            ['https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=test&latlng=10.70000000%2C11.40000000', [10.7, 11.4]],
+            ['https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=test&latlng=20.50000000%2C22.80000000', ['lat' => 20.5, 'lng' => 22.8]],
         ];
     }
 
@@ -51,10 +50,9 @@ class NearbyTest extends CommonTestClass
      */
     public function testServiceFailNoTarget(): void
     {
-        $lib = new Services\Nearby(new ApiAuth('test'));
         $this->expectExceptionMessage('You must set where to look!');
         $this->expectException(ServiceException::class);
-        $lib->nearby('', []);
+        $this->getLib()->nearby('', []);
     }
 
     /**
@@ -62,9 +60,14 @@ class NearbyTest extends CommonTestClass
      */
     public function testServiceFailWrongTarget(): void
     {
-        $lib = new Services\Nearby(new ApiAuth('test'));
         $this->expectExceptionMessage('Passed invalid values into coordinates!');
         $this->expectException(ServiceException::class);
-        $lib->nearby('', ['foo' => 'bar']);
+        $this->getLib()->nearby('', ['foo' => 'bar']);
+    }
+
+    protected function getLib(): Services\Nearby
+    {
+        $conf = ClientConfig::init('test');
+        return new Services\Nearby(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
     }
 }

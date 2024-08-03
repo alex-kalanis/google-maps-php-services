@@ -2,21 +2,22 @@
 
 namespace kalanis\google_maps\Services;
 
+
 use kalanis\google_maps\ServiceException;
+use Psr\Http\Message\RequestInterface;
+
 
 /**
  * Place Details service
  *
- * @author  Petr Plsek <me@kalanys.com>
- * @since   2.2.0
  * @see     https://developers.google.com/maps/documentation/places/web-service/details
  */
-class PlaceDetails extends AbstractMapService
+class PlaceDetails extends AbstractService
 {
     /**
      * @var string[]
      */
-    protected $allowedFields = [
+    protected array $allowedFields = [
         // basic
         'address_components', 'adr_address', 'business_status', 'formatted_address', 'geometry', 'icon',
         'icon_mask_base_uri', 'icon_background_color', 'name', 'photo', 'place_id', 'plus_code', 'type',
@@ -33,14 +34,9 @@ class PlaceDetails extends AbstractMapService
     /**
      * @var string[]
      */
-    protected $allowedSort = [
+    protected array $allowedSort = [
         'most_relevant', 'newest',
     ];
-
-    public function getPath(): string
-    {
-        return static::API_HOST . '/maps/api/place/details/json';
-    }
 
     /**
      * Place lookup
@@ -52,16 +48,16 @@ class PlaceDetails extends AbstractMapService
      * @param string|null $sortReviews
      * @param array<string, string|int|float> $params Query parameters
      * @throws ServiceException
-     * @return array<string, string|int|float>
+     * @return RequestInterface
      */
     public function placeDetails(
-        string $placeId,
-        array $fields = [],
+        string  $placeId,
+        array   $fields = [],
         ?string $region = null,
-        bool $translateReviews = true,
+        bool    $translateReviews = true,
         ?string $sortReviews = null,
-        array $params=[]
-    ): array
+        array   $params = []
+    ): RequestInterface
     {
         if (empty($placeId)) {
             throw new ServiceException('You must set where to look!');
@@ -75,7 +71,7 @@ class PlaceDetails extends AbstractMapService
         }
 
         if (!empty($region)) {
-            $params['region'] = strtolower(substr($region, 0,2));
+            $params['region'] = strtolower(substr($region, 0, 2));
         }
 
         if (!$translateReviews) {
@@ -86,6 +82,9 @@ class PlaceDetails extends AbstractMapService
             $params['reviews_sort'] = strtolower($sortReviews);
         }
 
-        return $this->extendQueryParams($params);
+        return $this->getWithDefaults(
+            static::API_HOST . '/maps/api/place/details/json',
+            $this->queryParamsLang($params),
+        );
     }
 }

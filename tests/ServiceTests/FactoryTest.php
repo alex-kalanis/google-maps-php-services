@@ -4,10 +4,11 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use ReflectionException;
-use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ClientConfig;
+use kalanis\google_maps\Remote\Headers;
 use kalanis\google_maps\ServiceException;
 use kalanis\google_maps\Services;
+use ReflectionException;
 
 
 class FactoryTest extends CommonTestClass
@@ -18,8 +19,7 @@ class FactoryTest extends CommonTestClass
      */
     public function testServiceOk(): void
     {
-        $lib = new XFactory(new ApiAuth('test'));
-        $this->assertNotEmpty($lib->getService('directions'));
+        $this->assertNotEmpty($this->getLib()->getService('directions'));
     }
 
     /**
@@ -28,10 +28,9 @@ class FactoryTest extends CommonTestClass
      */
     public function testServiceFailNoTarget(): void
     {
-        $lib = new XFactory(new ApiAuth('test'));
         $this->expectExceptionMessage('Call to undefined service method *unknown one*');
         $this->expectException(ServiceException::class);
-        $lib->getService('unknown one');
+        $this->getLib()->getService('unknown one');
     }
 
     /**
@@ -40,17 +39,26 @@ class FactoryTest extends CommonTestClass
      */
     public function testServiceFailWrongTarget(): void
     {
-        $lib = new XFactory(new ApiAuth('test'));
         $this->expectExceptionMessage('Service *ServiceTests\XClass* is not an instance of \kalanis\google_maps\Services\AbstractService');
         $this->expectException(ServiceException::class);
-        $lib->getService('unusable');
+        $this->getLib()->getService('unusable');
+    }
+
+    protected function getLib(): Services\ServiceFactory
+    {
+        $conf = new ClientConfig('test');
+        return new XFactory(
+            new \XRequest(),
+            new Headers\ApiAuth($conf),
+            new Headers\Language($conf)
+        );
     }
 }
 
 
 class XFactory extends Services\ServiceFactory
 {
-    protected $serviceMethodMap = [
+    protected array $serviceMethodMap = [
         'directions' => Services\Directions::class,
         'unusable' => XClass::class,
     ];

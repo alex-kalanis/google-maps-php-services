@@ -2,34 +2,34 @@
 
 namespace kalanis\google_maps\Services;
 
+
+use Psr\Http\Message\RequestInterface;
+
+
 /**
  * Directions Service
  *
- * @author  Nick Tsai <myintaer@gmail.com>
- * @since   1.0.0
  * @see     https://developers.google.com/maps/documentation/directions/
  * @see     https://developers.google.com/maps/documentation/directions/get-directions
  */
-class Directions extends AbstractMapService
+class Directions extends AbstractService
 {
-    public function getPath(): string
-    {
-        return static::API_HOST . '/maps/api/directions/json';
-    }
-
     /**
      * Directions
      *
      * @param string $origin
      * @param string $destination
      * @param array<string, string|int|float> $params Query parameters
-     * @return array<string, string|int|float>
+     * @return RequestInterface
      */
-    public function directions(string $origin, string $destination, array $params = []): array
+    public function directions(string $origin, string $destination, array $params = []): RequestInterface
     {
-        $params['origin'] = (string) $origin;
-        $params['destination'] = (string) $destination;
+        $params['origin'] = $origin;
+        $params['destination'] = $destination;
 
-        return $this->extendQueryParams($params);
+        return $this->getWithDefaults(
+            static::API_HOST . '/maps/api/directions/json',
+            $this->queryParamsLang($params)
+        );
     }
 }

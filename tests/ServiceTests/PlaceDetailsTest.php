@@ -4,7 +4,8 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ClientConfig;
+use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
 use kalanis\google_maps\Services;
 
@@ -16,15 +17,10 @@ class PlaceDetailsTest extends CommonTestClass
      */
     public function testService(): void
     {
-        $lib = new Services\PlaceDetails(new ApiAuth('test'));
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json', $lib->getPath());
-        $this->assertEquals([
-            'place_id' => 'foo',
-            'region' => 'gr',
-            'reviews_sort' => 'newest',
-            'reviews_no_translations' => 'true',
-            'key' => 'test',
-        ], $lib->placeDetails('foo', [], 'Greece', false, 'Newest'));
+        $data = $this->getLib()->placeDetails('foo', [], 'Greece', false, 'Newest');
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json?key=test&place_id=foo&region=gr&reviews_no_translations=true&reviews_sort=newest', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
@@ -32,12 +28,10 @@ class PlaceDetailsTest extends CommonTestClass
      */
     public function testServiceFields(): void
     {
-        $lib = new Services\PlaceDetails(new ApiAuth('test'));
-        $this->assertEquals([
-            'place_id' => 'foo',
-            'fields' => 'photo,rating',
-            'key' => 'test',
-        ], $lib->placeDetails('foo', ['rating', 'witchcraft', 'photo', 'issues']));
+        $data = $this->getLib()->placeDetails('foo', ['rating', 'witchcraft', 'photo', 'issues']);
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/details/json?key=test&place_id=foo&fields=photo%2Crating', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
@@ -45,9 +39,14 @@ class PlaceDetailsTest extends CommonTestClass
      */
     public function testServiceFailNoTarget(): void
     {
-        $lib = new Services\PlaceDetails(new ApiAuth('test'));
         $this->expectExceptionMessage('You must set where to look!');
         $this->expectException(ServiceException::class);
-        $lib->placeDetails('');
+        $this->getLib()->placeDetails('');
+    }
+
+    protected function getLib(): Services\PlaceDetails
+    {
+        $conf = ClientConfig::init('test');
+        return new Services\PlaceDetails(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
     }
 }

@@ -2,16 +2,17 @@
 
 namespace kalanis\google_maps\Services;
 
+
+use kalanis\google_maps\Remote\Headers\ApiAuth;
+use kalanis\google_maps\Remote\Headers\Language;
+use kalanis\google_maps\ServiceException;
+use Psr\Http\Message\RequestInterface;
 use ReflectionClass;
 use ReflectionException;
-use kalanis\google_maps\ApiAuth;
-use kalanis\google_maps\ServiceException;
+
 
 /**
  * Google Maps PHP Client - factory to get services
- * 
- * @author  Petr Plsek <me@kalanys.com>
- * @version 2.0.0
  **/
 class ServiceFactory
 {
@@ -20,30 +21,28 @@ class ServiceFactory
      *
      * @var array<string, class-string> Method => Service Class name
      */
-    protected $serviceMethodMap = [
+    protected array $serviceMethodMap = [
         'directions' => Directions::class,
         'distanceMatrix' => DistanceMatrix::class,
         'elevation' => Elevation::class,
+        'findPlace' => FindPlace::class,
+        'findText' => FindText::class,
         'geocode' => Geocoding::class,
         'reverseGeocode' => Geocoding::class,
         'geolocate' => Geolocation::class,
-        'timezone' => Timezone::class,
         'nearby' => Nearby::class,
-        'findPlace' => FindPlace::class,
-        'findText' => FindText::class,
         'placeDetails' => PlaceDetails::class,
-        'computeRoutes' => Routes::class,
         'snapToRoads' => Roads::class,
+        'computeRoutes' => Routes::class,
+        'timezone' => Timezone::class,
     ];
 
-    /**
-     * @var ApiAuth
-     */
-    protected $apiAuth = null;
-
-    public function __construct(ApiAuth $apiAuth)
+    public function __construct(
+        protected RequestInterface $request,
+        protected ApiAuth          $apiAuth,
+        protected Language         $lang,
+    )
     {
-        $this->apiAuth = $apiAuth;
     }
 
     /**
@@ -63,7 +62,7 @@ class ServiceFactory
         $service = $this->serviceMethodMap[$method];
 
         $reflection = new ReflectionClass($service);
-        $instance = $reflection->newInstance($this->apiAuth);
+        $instance = $reflection->newInstance($this->request, $this->apiAuth, $this->lang);
 
         if (!$instance instanceof AbstractService) {
             throw new ServiceException("Service *{$service}* is not an instance of \kalanis\google_maps\Services\AbstractService", 400);

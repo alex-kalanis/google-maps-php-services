@@ -13,5 +13,6 @@ tests/data/clover.xml
 
 # external libs
 tests/external/
+tests/discard/
 /composer.lock
 /vendor

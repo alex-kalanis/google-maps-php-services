@@ -2,55 +2,59 @@
 
 namespace kalanis\google_maps;
 
+
 use Exception;
+use kalanis\google_maps\Remote\Headers\ApiAuth;
+use kalanis\google_maps\Remote\Headers\Language;
+use kalanis\google_maps\Remote\Response;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+
 
 /**
  * Google Maps PHP Client - facade for processing
- * 
- * @author  Nick Tsai <myintaer@gmail.com>
- * @version 1.2.0
  *
- * @method array directions(string $origin, string $destination, array $params=[])
- * @method array distanceMatrix(string $origin, string $destination, array $params=[])
- * @method array elevation(string $locations, array $params=[])
- * @method array geocode(string $address, array $params=[])
- * @method array reverseGeocode(string $latlng, array $params=[])
- * @method array computeRoutes(array $origin, array $destination, array $body=[], array $headers=[], array $params=[])
- * @method array geolocate(array $bodyParams=[])
- * @method array timezone(string $location, string $timestamp=null, array $params=[])
- * @method array nearby(string $keyword, float[] $latlng, float $radius=null, string $type=null, array $params=[])
- * @method array findPlace(string $input, string $inputType, string[] $fields=[], float[] $bias=null, array $params=[])
- * @method array findText(string $query, float $radius, float[] $location=[], int $maxPrice=null, int $minPrice=null, bool $openNow=false, string $region=null, string $type=null, array $params=[])
- * @method array placeDetails(string $placeId, string[] $fields=[], string $region=null, bool $translateReviews=true, string $sortReviews=null, array $params=[])
- * @method array snapToRoads($path, array $params=[])
- *
- * @codeCoverageIgnore because accessing external resources
+ * @method array|string directions(string $origin, string $destination, array $params = [])
+ * @method array|string distanceMatrix(string $origin, string $destination, array $params = [])
+ * @method array|string elevation(string $locations, array $params = [])
+ * @method array|string geocode(string $address, array $params = [])
+ * @method array|string reverseGeocode(string $lat, string $lng, array $params = [])
+ * @method array|string computeRoutes(array $origin, array $destination, array $body = [], array $headers = [], array $params = [])
+ * @method array|string geolocate(array $bodyParams = [])
+ * @method array|string timezone(string $location, string|null $timestamp = null, array $params = [])
+ * @method array|string nearby(string $keyword, float[] $latlng, float|null $radius = null, string|null $type = null, array $params = [])
+ * @method array|string findPlace(string $input, string $inputType, string[] $fields = [], float[]|null $bias = null, array $params = [])
+ * @method array|string findText(string $query, float $radius, float[] $location = [], int|null $maxPrice = null, int|null $minPrice = null, bool $openNow = false, string|null $region = null, string|null $type = null, array $params = [])
+ * @method array|string placeDetails(string $placeId, string[] $fields = [], string $region = null, bool $translateReviews = true, string $sortReviews = null, array $params = [])
+ * @method array|string snapToRoads(array|string|null $path, array $params = [])
  */
 class Client
 {
-    /**
-     * Available service to run
-     *
-     * @var Services
-     */
-    protected $services;
+    protected Services $services;
+    protected ClientConfig $config;
 
     /**
-     * Constructor
-     *
-     * @param string|array<string, string> $optParams API Key or option parameters
-     *  'key' => Google API Key
-     *  'clientID' => Google clientID
-     *  'clientSecret' => Google clientSecret
-     * @throws ServiceException
+     * @param RequestInterface $request
+     * @param ClientInterface $client
+     * @param ClientConfig $config
+     * Each of these three must be available via Dependency Injection
      */
-    public function __construct($optParams)
+    public function __construct(
+        RequestInterface $request,
+        ClientInterface  $client,
+        ClientConfig     $config,
+    )
     {
-        $this->services = new Services(new Clients\GuzzleClient(), new Services\ServiceFactory(new ApiAuth($optParams)));
-        $defaultLang = isset($optParams['language']) ? $optParams['language'] : null;
-        if ($defaultLang) {
-            $this->setLanguage(strval($defaultLang));
-        }
+        $this->config = $config;
+        $this->services = new Services(
+            new Services\ServiceFactory(
+                $request,
+                new ApiAuth($config),
+                new Language($config)
+            ),
+            $client,
+            new Response()
+        );
     }
 
     /**
@@ -59,9 +63,9 @@ class Client
      * @param string|null $language ex. 'zh-TW'
      * @return $this
      */
-    public function setLanguage(?string $language=null): self
+    public function setLanguage(?string $language = null): self
     {
-        $this->services->setLanguage($language);
+        $this->config->setLanguage($language);
         return $this;
     }
 
@@ -75,7 +79,7 @@ class Client
      * @throws Exception
      * @return mixed Current service method return
      */
-    public function __call($method, $arguments)
+    public function __call(string $method, array $arguments)
     {
         return $this->services->__call($method, $arguments);
     }

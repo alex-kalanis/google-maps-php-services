@@ -30,7 +30,7 @@
   <testsuites>
     <testsuite name="ALL">
       <directory>tests/BasicTests</directory>
-      <directory>tests/ClientTests</directory>
+      <directory>tests/RemoteTests</directory>
       <directory>tests/ServiceTests</directory>
     </testsuite>
   </testsuites>

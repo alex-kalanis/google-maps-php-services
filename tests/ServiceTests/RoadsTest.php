@@ -4,7 +4,8 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ClientConfig;
+use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
 use kalanis\google_maps\Services;
 
@@ -16,13 +17,10 @@ class RoadsTest extends CommonTestClass
      */
     public function testService(): void
     {
-        $lib = new Services\Roads(new ApiAuth('test'));
-        $this->assertEquals('https://roads.googleapis.com/v1/snapToRoads', $lib->getPath());
-        $this->assertEquals([
-            'path' => 'foo',
-            'interpolate' => 'true',
-            'key' => 'test',
-        ], $lib->snapToRoads('foo', ['interpolate' => true]));
+        $data = $this->getLib()->snapToRoads('foo', ['interpolate' => true]);
+        $this->assertEquals('https://roads.googleapis.com/v1/snapToRoads?key=test&interpolate=true&path=foo', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
@@ -30,11 +28,10 @@ class RoadsTest extends CommonTestClass
      */
     public function testServiceFields(): void
     {
-        $lib = new Services\Roads(new ApiAuth('test'));
-        $this->assertEquals([
-            'path' => '123.456,789,123|456.789,123.456|789.123,456,789',
-            'key' => 'test',
-        ], $lib->snapToRoads([[123.456, 789,123], [456.789, 123.456], [789.123, 456,789]], ['interpolate' => false]));
+        $data = $this->getLib()->snapToRoads([[123.456, 789,123], [456.789, 123.456], [789.123, 456,789]], ['interpolate' => false]);
+        $this->assertEquals('https://roads.googleapis.com/v1/snapToRoads?key=test&path=123.456%2C789%2C123%7C456.789%2C123.456%7C789.123%2C456%2C789', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
@@ -42,9 +39,14 @@ class RoadsTest extends CommonTestClass
      */
     public function testServiceFailWrongPath(): void
     {
-        $lib = new Services\Roads(new ApiAuth('test'));
         $this->expectExceptionMessage('Unknown path format. Pass array of arrays of floats or the string itself.');
         $this->expectException(ServiceException::class);
-        $lib->snapToRoads(123456789, ['foo' => 'bar']);
+        $this->getLib()->snapToRoads(null, ['foo' => 'bar']);
+    }
+
+    protected function getLib(): Services\Roads
+    {
+        $conf = ClientConfig::init('test');
+        return new Services\Roads(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
     }
 }

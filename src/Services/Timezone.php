@@ -2,36 +2,32 @@
 
 namespace kalanis\google_maps\Services;
 
+
 use kalanis\google_maps\ServiceException;
+use Psr\Http\Message\RequestInterface;
+
 
 /**
  * Timezone Service
- * 
- * @author  Nick Tsai <myintaer@gmail.com>
- * @since   1.0.0
+ *
  * @see     https://developers.google.com/maps/documentation/timezone/
  */
-class Timezone extends AbstractMapService
+class Timezone extends AbstractService
 {
-    public function getPath(): string
-    {
-        return static::API_HOST . '/maps/api/timezone/json';
-    }
-
     /**
      * Timezone
      *
      * @param string|array<string> $location
-     * @param int $timestamp
+     * @param int|null $timestamp
      * @param array<string, string|int|float> $params Query parameters
      * @throws ServiceException
-     * @return array<string, string|int|float>
+     * @return RequestInterface
      */
-    public function timezone($location, ?int $timestamp=null, array $params=[]): array
+    public function timezone(string|array $location, ?int $timestamp = null, array $params = []): RequestInterface
     {
         // `location` seems to only allow `lat,lng` pattern
         if (is_string($location)) {
-            
+
             $params['location'] = $location;
 
         } else {
@@ -54,6 +50,9 @@ class Timezone extends AbstractMapService
         // Timestamp
         $params['timestamp'] = ($timestamp) ?: time();
 
-        return $this->extendQueryParams($params);
+        return $this->getWithDefaults(
+            static::API_HOST . '/maps/api/timezone/json',
+            $this->queryParamsLang($params)
+        );
     }
 }

@@ -2,91 +2,42 @@
 
 namespace kalanis\google_maps\Services;
 
-use kalanis\google_maps\ApiAuth;
+
+use kalanis\google_maps\Remote\Headers\ApiAuth;
+use kalanis\google_maps\Remote\Headers\Language;
+use Psr\Http\Message\RequestInterface;
+
 
 /**
  * Google Maps Abstract Service
  *
- * @author  Nick Tsai <myintaer@gmail.com>
- * @since   1.0.0
- *
  * Each basic call returns params to GET part of request
  * To fill HTTP headers, you must fill method "getHeaders()"
- * To fill request body, you must data in "$body" variable
+ * To fill request body, you must set data in "$body" variable
  *
  * Pass ApiAuth class is necessary to set Google API keys
  */
 abstract class AbstractService
 {
-
-    /**
-     * Google Maps default language
-     *
-     * @var string|null ex. 'zh-TW'
-     */
-    protected $language;
-
-    /**
-     * Google Api Auth class providing auth params
-     *
-     * @var ApiAuth
-     */
-    protected $auth;
-
-    /**
-     * @var string|null body of the message
-     */
-    protected $body = null;
+    protected const API_HOST = 'https://maps.googleapis.com';
 
     /**
      * Constructor
      *
-     * @param ApiAuth $auth Google Api class to get auth params
+     * @param RequestInterface $request Request to fill
+     * @param ApiAuth $auth Class with auth params
+     * @param Language $lang Class to set the language
      */
-    public function __construct(ApiAuth $auth)
+    public function __construct(
+        protected RequestInterface $request,
+        protected ApiAuth          $auth,
+        protected Language         $lang,
+    )
     {
-        $this->auth = $auth;
     }
 
     /**
-     * Return path to query endpoint
-     *
-     * @return string
-     */
-    abstract public function getPath(): string;
-
-    /**
-     * Return method which will be used in query
-     *
-     * @return string
-     */
-    public function getMethod(): string
-    {
-        return 'GET';
-    }
-
-    /**
-     * Return prepared headers if there are some
-     *
-     * @return array<string, string>
-     */
-    public function getHeaders(): array
-    {
-        return [];
-    }
-
-    /**
-     * Return prepared body if there is any
-     *
-     * @return string
-     */
-    public function getBody(): ?string
-    {
-        return $this->body;
-    }
-
-    /**
-     * If too parse inner response body for 'results' node
+     * If parse response body for 'results' node
      * Usually necessary to discard that behavior if you want to get 'status' node
      *
      * @return bool
@@ -96,20 +47,30 @@ abstract class AbstractService
         return true;
     }
 
-    /**
-     * Set default language for Google Maps API
-     *
-     * @param string|null $language ex. 'zh-TW'
-     * @return self
-     */
-    public function setLanguage(?string $language = null): self
+    protected function getWithDefaults(string $path, array $params): RequestInterface
     {
-        $this->language = $language;
-        return $this;
+        return $this->request
+            ->withMethod('GET')
+            ->withRequestTarget(
+                $path . (empty($params) ? '' : '?' . http_build_query($params, '', null, PHP_QUERY_RFC3986))
+            );
     }
 
-    protected function canAddLanguage(string $method): bool
+    /**
+     * @param array<string, string|int|float> $params
+     * @return array<string, string|int|float>
+     */
+    protected function queryParams(array $params): array
     {
-        return ('GET' == strtoupper($method)) && $this->language;
+        return array_merge($this->auth->getAuthParams(), $params);
+    }
+
+    /**
+     * @param array<string, string|int|float> $params
+     * @return array<string, string|int|float>
+     */
+    protected function queryParamsLang(array $params): array
+    {
+        return array_merge($this->auth->getAuthParams(), $this->lang->getToQuery('GET'), $params);
     }
 }

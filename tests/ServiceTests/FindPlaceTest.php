@@ -4,7 +4,8 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ClientConfig;
+use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
 use kalanis\google_maps\Services;
 
@@ -16,13 +17,10 @@ class FindPlaceTest extends CommonTestClass
      */
     public function testService(): void
     {
-        $lib = new Services\FindPlace(new ApiAuth('test'));
-        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json', $lib->getPath());
-        $this->assertEquals([
-            'input' => 'foo',
-            'inputtype' => 'bar',
-            'key' => 'test',
-        ], $lib->findPlace('foo', 'bar'));
+        $data = $this->getLib()->findPlace('foo', 'bar');
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
@@ -30,35 +28,34 @@ class FindPlaceTest extends CommonTestClass
      */
     public function testServiceFields(): void
     {
-        $lib = new Services\FindPlace(new ApiAuth('test'));
-        $this->assertEquals([
-            'input' => 'foo',
-            'inputtype' => 'bar',
-            'fields' => 'photo,rating',
-            'key' => 'test',
-        ], $lib->findPlace('foo', 'bar', ['rating', 'witchcraft', 'photo', 'issues']));
+        $data = $this->getLib()->findPlace('foo', 'bar', ['rating', 'witchcraft', 'photo', 'issues']);
+        $this->assertEquals('https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&fields=photo%2Crating', $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     /**
-     * @param array<string, string> $result
+     * @param string $result
      * @param array<string|int, string> $bias
      * @throws ServiceException
      * @dataProvider biasProvider
      */
-    public function testServiceBias(array $result, array $bias): void
+    public function testServiceBias(string $result, array $bias): void
     {
-        $lib = new Services\FindPlace(new ApiAuth('test'));
-        $this->assertEquals($result, $lib->findPlace('foo', 'bar', [], $bias));
+        $data = $this->getLib()->findPlace('foo', 'bar', [], $bias);
+        $this->assertEquals($result, $data->getRequestTarget());
+        $this->assertNotEmpty($data->getBody());
+        $this->assertEmpty($data->getBody()->getContents());
     }
 
     public static function biasProvider(): array
     {
         return [
-            [['input' => 'foo', 'inputtype' => 'bar', 'locationbias' => 'ipbias', 'key' => 'test',], []],
-            [['input' => 'foo', 'inputtype' => 'bar', 'locationbias' => 'circle:70.00@10.700000,11.400000', 'key' => 'test',], [10.7, 11.4, 70]],
-            [['input' => 'foo', 'inputtype' => 'bar', 'locationbias' => 'circle:6.30@20.500000,22.800000', 'key' => 'test',], ['lat' => 20.5, 'lng' => 22.8, 'rad' => 6.3]],
-            [['input' => 'foo', 'inputtype' => 'bar', 'locationbias' => 'rectangle:10.700000,11.400000|-9.700000,-3.200000', 'key' => 'test',], [10.7, 11.4, -9.7, -3.2]],
-            [['input' => 'foo', 'inputtype' => 'bar', 'locationbias' => 'rectangle:15.000000,-5.100000|20.500000,22.800000', 'key' => 'test',], ['n' => 20.5, 'e' => 22.8, 's' => 15.0, 'w' => -5.1, ]],
+            ['https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&locationbias=ipbias', []],
+            ['https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&locationbias=circle%3A70.00%4010.700000%2C11.400000', [10.7, 11.4, 70]],
+            ['https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&locationbias=circle%3A6.30%4020.500000%2C22.800000', ['lat' => 20.5, 'lng' => 22.8, 'rad' => 6.3]],
+            ['https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&locationbias=rectangle%3A10.700000%2C11.400000%7C-9.700000%2C-3.200000', [10.7, 11.4, -9.7, -3.2]],
+            ['https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=test&input=foo&inputtype=bar&locationbias=rectangle%3A15.000000%2C-5.100000%7C20.500000%2C22.800000', ['n' => 20.5, 'e' => 22.8, 's' => 15.0, 'w' => -5.1, ]],
         ];
     }
 
@@ -67,10 +64,9 @@ class FindPlaceTest extends CommonTestClass
      */
     public function testServiceFailNoTarget(): void
     {
-        $lib = new Services\FindPlace(new ApiAuth('test'));
         $this->expectExceptionMessage('You must set where to look!');
         $this->expectException(ServiceException::class);
-        $lib->findPlace('', 'foo');
+        $this->getLib()->findPlace('', 'foo');
     }
 
     /**
@@ -78,9 +74,14 @@ class FindPlaceTest extends CommonTestClass
      */
     public function testServiceFailWrongTarget(): void
     {
-        $lib = new Services\FindPlace(new ApiAuth('test'));
         $this->expectExceptionMessage('Passed invalid values into coordinates!');
         $this->expectException(ServiceException::class);
-        $lib->findPlace('foo', 'bar', [], ['foo' => 'bar']);
+        $this->getLib()->findPlace('foo', 'bar', [], ['foo' => 'bar']);
+    }
+
+    protected function getLib(): Services\FindPlace
+    {
+        $conf = ClientConfig::init('test');
+        return new Services\FindPlace(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
     }
 }

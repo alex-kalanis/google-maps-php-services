@@ -2,22 +2,18 @@
 
 namespace kalanis\google_maps\Services;
 
+
 use kalanis\google_maps\ServiceException;
+use Psr\Http\Message\RequestInterface;
+
 
 /**
  * Find by text service
  *
- * @author  Petr Plsek <me@kalanys.com>
- * @since   2.2.0
  * @see     https://developers.google.com/maps/documentation/places/web-service/search-text
  */
-class FindText extends AbstractMapService
+class FindText extends AbstractService
 {
-    public function getPath(): string
-    {
-        return static::API_HOST . '/maps/api/place/textsearch/json';
-    }
-
     /**
      * Find by text lookup
      *
@@ -31,19 +27,19 @@ class FindText extends AbstractMapService
      * @param string|null $type
      * @param array<string, string|int|float> $params Query parameters
      * @throws ServiceException
-     * @return array<string, string|int|float>
+     * @return RequestInterface
      */
     public function findText(
-        string $query,
-        float $radius,
-        array $location = [],
-        ?int $maxPrice = null,
-        ?int $minPrice = null,
-        bool $openNow = false,
+        string  $query,
+        float   $radius,
+        array   $location = [],
+        ?int    $maxPrice = null,
+        ?int    $minPrice = null,
+        bool    $openNow = false,
         ?string $region = null,
         ?string $type = null,
-        array $params=[]
-    ): array
+        array   $params = []
+    ): RequestInterface
     {
         if (empty($query) || empty($radius)) {
             throw new ServiceException('You must set where to look!');
@@ -57,15 +53,12 @@ class FindText extends AbstractMapService
         if (!empty($location)) {
 
             if (isset($location['lat']) && isset($location['lng'])) {
-
                 $params['location'] = sprintf('%1.08F,%1.08F', $location['lat'], $location['lng']);
 
             } elseif (isset($location[0]) && isset($location[1])) {
-
                 $params['location'] = sprintf('%1.08F,%1.08F', $location[0], $location[1]);
 
             } else {
-
                 throw new ServiceException('Passed invalid values into coordinates! You must use either array with lat and lng and rad or 0, 1, 2 and 3 keys.');
 
             }
@@ -84,13 +77,16 @@ class FindText extends AbstractMapService
         }
 
         if (!empty($region)) {
-            $params['region'] = strtolower(substr($region, 0,2));
+            $params['region'] = strtolower(substr($region, 0, 2));
         }
 
         if (!empty($type)) {
             $params['type'] = $type;
         }
 
-        return $this->extendQueryParams($params);
+        return $this->getWithDefaults(
+            static::API_HOST . '/maps/api/place/textsearch/json',
+            $this->queryParamsLang($params)
+        );
     }
 }

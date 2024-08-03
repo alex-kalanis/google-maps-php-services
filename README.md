@@ -24,10 +24,10 @@ Fork of older Nick Tsai's library.
 - Type checks
 - Dependency injection
 - With PSR and other remote libraries than Guzzle/Curl in mind
+- Only API key now usable
 
 
-OUTLINE
--------
+## OUTLINE
 
 - [Demonstration](#demonstration)
 - [Description](#description)
@@ -36,7 +36,6 @@ OUTLINE
 - [Installation](#installation)
 - [Usage](#usage)
     - [Client](#client)
-        - [Google Maps APIs Premium Plan license](#google-maps-apis-premium-plan-license)
         - [Language](#language)
     - [Directions API](#directions-api)
     - [Distance Matrix API](#distance-matrix-api)
@@ -54,19 +53,26 @@ OUTLINE
 
 ## DEMONSTRATION
 
-For nearly raw php / custom frameworks:
+For nearly any raw php / custom frameworks:
 
 ```php
 // somewhere in configuration something like this
-$gmaps = new \kalanis\google_maps\ConfigClient('Your API Key');
 
-// then on desired pages
+/// ... with anonymous function as setter in DI
+function (): \kalanis\google_maps\ClientConfig
+{
+    return \kalanis\google_maps\ClientConfig::init('Your API Key');
+}
+```
 
+Then on desired pages:
+
+```php
 class YourPresenter extends YourFramework
 {
     public function __construct(
-    // ... other classes
-        protected kalanis\google_maps\Service $mapService,
+        // ... other used classes
+        protected kalanis\google_maps\Client $mapService,
     ) {
     }
 
@@ -87,15 +93,38 @@ class YourPresenter extends YourFramework
 }
 ```
 
+For [Laravel](https://laravel.com/):
+
+```php
+/// app\Providers\AppServiceProvider.php
+public function register()
+{
+    // ... other binds
+    $this->app()->bind(\kalanis\google_maps\Client::class, function(
+            Psr\Http\Client\ClientInterface $client,
+            Psr\Http\Message\RequestInterface $request
+        ) {
+            return new \kalanis\google_maps\Client(
+                $request,
+                $client,
+                \kalanis\google_maps\ClientConfig::init('Your API Key'),
+            );
+        }
+    );
+}
+```
+
+And then in the controller is the code the same as in another random framework.
+
 For [Symfony](https://symfony.com/):
 
 ```yaml
 # config/services.yaml
 services:
-  kalanis\google_maps\ConfigClient:
+  kalanis\google_maps\ClientConfig:
     arguments: ['Your API Key']
-  kalanis\google_maps\Service:
-    arguments: ['@Psr\Http\Client\ClientInterface', '@kalanis\google_maps\ConfigClient']
+  kalanis\google_maps\Client:
+    arguments: ['@Psr\Http\Message\RequestInterface', '@Psr\Http\Client\ClientInterface', '@kalanis\google_maps\ClientConfig']
 ```
 
 ```php
@@ -112,8 +141,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class YourMapsPresenter extends AbstractController
 {
     public function __construct(
-    // ... other classes
-        protected kalanis\google_maps\Service $mapService,
+        // ... other used classes
+        protected kalanis\google_maps\Client $mapService,
     ) {
     }
 
@@ -127,7 +156,7 @@ class YourMapsPresenter extends AbstractController
     #[Route('/reverse-geocode', lat: '42.916667', lon: '17.533333', defaults: ['lat' => '42.916667', 'lon' => '17.533333'], methods: ['GET'])]
     public function reverseGeocode(Request $request, string $lat, string $lon): Response
     {
-        $geocodeResult = $this->mapService->reverseGeocode($lat, $lon);
+        $geocodeResult = $this->mapService->reverseGeocode([$lat, $lon]);
         return new JsonResponse($geocodeResult)
     }
 }
@@ -137,7 +166,8 @@ For [Nette](https://nette.org/):
 ```neon
 services:
     # ... other ones
-    - kalanis\google_maps\ConfigClient('Your API Key')
+    - kalanis\google_maps\ClientConfig('Your API Key')
+    - kalanis\google_maps\Client
     # ... other ones
 ```
 
@@ -151,7 +181,8 @@ parameters:
 
 services:
     # ... other ones
-    - kalanis\google_maps\ConfigClient(%parameters.googleMapsKey%)
+    - kalanis\google_maps\ClientConfig(%parameters.googleMapsKey%)
+    - kalanis\google_maps\Client
     # ... other ones
 ```
 
@@ -163,7 +194,8 @@ And then in class like in other frameworks with DI.
 
 ## DESCRIPTION
 
-The PHP Client for Google Maps Services is a PHP Client library for the following [Google Maps APIs](https://developers.google.com/maps):
+The PHP Client for Google Maps Services is a PHP Client library for the following
+[Google Maps APIs](https://developers.google.com/maps):
 
 - Maps
     - [Elevation API](#elevation-api) ([Google Doc](https://developers.google.com/maps/documentation/elevation/))
@@ -211,8 +243,9 @@ To get an API key:
  4. Create a new **Server key**.
  5. If you'd like to restrict requests to a specific IP address, do so now.
 
-For guided help, follow the instructions for the [Directions API][directions-key]. You only need one API key, but remember to enable all the APIs you need.
-For even more information, see the guide to [API keys][apikey].
+For guided help, follow the instructions for the [Directions API][directions-key].
+You only need one API key, but remember to enable all the APIs you need.
+For even more information, see the guide to [API keys][api-key].
 
 **Important:** This key should be kept secret on your server.
 
@@ -234,17 +267,18 @@ use kalanis\google_maps\Client;
 
 ---
 
-USAGE
------
+## USAGE
 
-Before using any Google Maps Services, first you need to create a Client with configuration, then use the client to access Google Maps Services.
+Before using any Google Maps Services, first you need to create a Client with configuration,
+then use the client to access Google Maps Services.
 
 ### Client
 
-Create a Client using [API key]((#api-keys)):
+Create a Client using [API key][api-key]:
 
 ```php
-$gmaps = new \kalanis\google_maps\Service(
+$gmaps = new \kalanis\google_maps\Client(
+    new \PsrMock\Psr7\Request(),
     new \PsrMock\Psr18\Client(),
     new \kalanis\google_maps\ConfigClient('Your API Key'),
 );
@@ -255,7 +289,8 @@ $gmaps = new \kalanis\google_maps\Service(
 You could set language for Client for all services:
 
 ```php
-$gmaps = new \kalanis\google_maps\Service(
+$gmaps = new \kalanis\google_maps\Client(
+    new \PsrMock\Psr7\Request(),
     new \PsrMock\Psr18\Client(),
     new \kalanis\google_maps\ConfigClient('Your API Key', 'pt-br'),
 );
@@ -409,6 +444,7 @@ $nearbyResult = $gmaps->placeDetails('ChIJN1t_tDeuEmsRUsoyG83frY4', ['name', 'cu
 [Google Maps API Web Services]: https://developers.google.com/maps/documentation/webservices/
 [Routes API]: https://developers.google.com/maps/documentation/routes
 [Directions API]: https://developers.google.com/maps/documentation/directions/
+[api-key]: https://developers.google.com/maps/documentation/directions/get-api-key#before-you-begin
 [directions-key]: https://developers.google.com/maps/documentation/directions/get-api-key#key
 [directions-client-id]: https://developers.google.com/maps/documentation/directions/get-api-key#client-id
 [Distance Matrix API]: https://developers.google.com/maps/documentation/distancematrix/

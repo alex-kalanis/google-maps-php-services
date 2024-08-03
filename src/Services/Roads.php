@@ -4,29 +4,24 @@ namespace kalanis\google_maps\Services;
 
 
 use kalanis\google_maps\ServiceException;
+use Psr\Http\Message\RequestInterface;
+
 
 /**
  * Roads Service
- * 
- * @author  Nick Tsai <myintaer@gmail.com>
- * @since   1.2.0
+ *
  * @see https://developers.google.com/maps/documentation/roads
  */
 class Roads extends AbstractService
 {
-    public function getPath(): string
-    {
-        return 'https://roads.googleapis.com/v1/snapToRoads';
-    }
-
     /**
      * Roads lookup
      * @param array<int, float[]>|string|null $path
      * @param array<string, string|int|float> $params Query parameters
      * @throws ServiceException
-     * @return array<string, string|int|float>
+     * @return RequestInterface
      */
-    public function snapToRoads($path=null, $params=[])
+    public function snapToRoads(array|string|null $path = null, array $params = []): RequestInterface
     {
         if (is_array($path)) {
             $positions = [];
@@ -48,6 +43,9 @@ class Roads extends AbstractService
             }
         }
 
-        return array_merge($this->auth->getAuthParams(), $params);
+        return $this->getWithDefaults(
+            'https://roads.googleapis.com/v1/snapToRoads',
+            $this->queryParams($params)
+        );
     }
 }
