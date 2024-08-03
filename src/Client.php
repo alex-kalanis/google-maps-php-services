@@ -3,12 +3,10 @@
 namespace kalanis\google_maps;
 
 
-use Exception;
-use kalanis\google_maps\Remote\Headers\ApiAuth;
-use kalanis\google_maps\Remote\Headers\Language;
-use kalanis\google_maps\Remote\Response;
+use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
+use ReflectionException;
 
 
 /**
@@ -49,11 +47,11 @@ class Client
         $this->services = new Services(
             new Services\ServiceFactory(
                 $request,
-                new ApiAuth($config),
-                new Language($config)
+                new Remote\Headers\ApiAuth($config),
+                new Remote\Headers\Language($config)
             ),
             $client,
-            new Response()
+            new Remote\Response()
         );
     }
 
@@ -76,7 +74,9 @@ class Client
      *
      * @param string $method Client's method name
      * @param array<int, string|int|float> $arguments Method arguments
-     * @throws Exception
+     * @throws ServiceException
+     * @throws ReflectionException
+     * @throws ClientExceptionInterface
      * @return mixed Current service method return
      */
     public function __call(string $method, array $arguments)

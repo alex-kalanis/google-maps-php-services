@@ -25,7 +25,7 @@ class Routes extends AbstractService
      * @throws ServiceException
      * @return RequestInterface
      */
-    public function computeRoutes(array|null $origin, array|null $destination, $body = []): RequestInterface
+    public function computeRoutes(array|null $origin, array|null $destination, array $body = []): RequestInterface
     {
         $requestBody = $body;
         $requestBody['origin'] = $origin ?? $requestBody['origin'] ?? [];

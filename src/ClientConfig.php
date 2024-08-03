@@ -24,6 +24,7 @@ class ClientConfig
      *      key: Google API Key,
      *      language: Default language
      * @throws ServiceException
+     * @return $this
      */
     public static function init($optParams): ClientConfig
     {

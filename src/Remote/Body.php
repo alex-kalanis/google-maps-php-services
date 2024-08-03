@@ -91,6 +91,10 @@ class Body implements StreamInterface
         return substr($this->content, $this->pointer);
     }
 
+    /**
+     * @param string|null $key
+     * @return array|mixed|null
+     */
     public function getMetadata(?string $key = null)
     {
         $available = [
@@ -100,7 +104,7 @@ class Body implements StreamInterface
             'seekable' => $this->isSeekable(),
         ];
         if (!is_null($key)) {
-            return isset($available[$key]) ? [$key => $available[$key]] : null;
+            return $available[$key] ?? null;
         }
         return $available;
     }
