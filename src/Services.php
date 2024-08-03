@@ -7,6 +7,7 @@ use kalanis\google_maps\Remote\Response;
 use kalanis\google_maps\Services\ServiceFactory;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
 use ReflectionException;
 
 
@@ -59,9 +60,13 @@ class Services
 
         // Get the service from Factory
         $service = $this->factory->getService($method);
+        $request = call_user_func_array([$service, $method], $arguments);
+        if (!$request instanceof RequestInterface) {
+            throw new ServiceException(sprintf('Call *%s::%s* cannot be used - returns *%s*!', get_class($service), $method, gettype($request)));
+        }
         return $this->response->process(
             $this->client->sendRequest(
-                call_user_func_array([$service, $method], $arguments)
+                $request
             ),
             $service->wantInnerResult()
         );

@@ -47,6 +47,11 @@ abstract class AbstractService
         return true;
     }
 
+    /**
+     * @param string $path
+     * @param array<string, string|int|float> $params
+     * @return RequestInterface
+     */
     protected function getWithDefaults(string $path, array $params): RequestInterface
     {
         return $this->request

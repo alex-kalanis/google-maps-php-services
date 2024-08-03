@@ -11,6 +11,11 @@ use Psr\Http\Message\ResponseInterface;
  */
 class Response
 {
+    /**
+     * @param ResponseInterface $response
+     * @param bool $wantInnerResult
+     * @return array<string, mixed>|string
+     */
     public function process(ResponseInterface $response, bool $wantInnerResult): array|string
     {
         $message = $response->getBody()->getContents();

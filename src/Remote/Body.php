@@ -29,8 +29,12 @@ class Body implements StreamInterface
     {
     }
 
+    /**
+     * @return resource|null
+     */
     public function detach()
     {
+        return null;
     }
 
     public function tell(): int
@@ -48,7 +52,7 @@ class Body implements StreamInterface
         };
     }
 
-    public function getSize(): ?int
+    public function getSize(): int
     {
         return strlen($this->content);
     }

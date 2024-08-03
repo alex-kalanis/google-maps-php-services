@@ -79,6 +79,28 @@ class ServiceTest extends CommonTestClass
         ], $lib->directions('foo', 'bar'));
     }
 
+    public function testServiceFailInstance(): void
+    {
+        $conf = new ClientConfig('test');
+        $lib = new Services(
+            new XFactory(
+                new \XRequest(),
+                new ApiAuth($conf),
+                new Language($conf)
+            ),
+            new \XMockedResponse(
+                new \XResponse(
+                    200,
+                    '{"error_message": "Unable to show"}',
+                )
+            ),
+            new Response()
+        );
+        $this->expectExceptionMessage('Call *BasicTests\FailingReturn::dummy* cannot be used - returns *string*!');
+        $this->expectException(ServiceException::class);
+        $lib->dummy();
+    }
+
     public function testServicePassWithoutResults(): void
     {
         $conf = new ClientConfig('test');
@@ -143,3 +165,21 @@ class ServiceTest extends CommonTestClass
         ], $lib->directions('foo', 'bar'));
     }
 }
+
+
+class FailingReturn extends Services\AbstractService
+{
+    public function dummy(): string
+    {
+        return 'this is not a request';
+    }
+}
+
+
+class XFactory extends Services\ServiceFactory
+{
+    protected array $serviceMethodMap = [
+        'dummy' => FailingReturn::class,
+    ];
+}
+
