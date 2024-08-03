@@ -47,7 +47,7 @@ class Services
      * @throws ServiceException
      * @throws ReflectionException
      * @throws ClientExceptionInterface
-     * @return array<mixed>|string Processed service method return
+     * @return mixed Processed service method return
      */
     public function __call(string $method, array $arguments)
     {

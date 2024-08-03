@@ -14,9 +14,9 @@ class Response
     /**
      * @param ResponseInterface $response
      * @param bool $wantInnerResult
-     * @return array<string, mixed>|string
+     * @return mixed
      */
-    public function process(ResponseInterface $response, bool $wantInnerResult): array|string
+    public function process(ResponseInterface $response, bool $wantInnerResult): mixed
     {
         $message = $response->getBody()->getContents();
         $result = @json_decode($message, true);
