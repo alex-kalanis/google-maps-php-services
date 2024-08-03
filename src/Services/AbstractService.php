@@ -56,11 +56,11 @@ abstract class AbstractService
     {
         $current = parse_url($path);
         $url = $this->request->getUri()
-            ->withScheme($current['scheme'])
+            ->withScheme($current['scheme'] ?? '')
             ->withUserInfo('')
-            ->withHost($current['host'])
+            ->withHost($current['host'] ?? '')
             ->withPort(null)
-            ->withPath($current['path'])
+            ->withPath($current['path'] ?? '')
             ->withQuery('')
             ->withFragment('')
         ;
