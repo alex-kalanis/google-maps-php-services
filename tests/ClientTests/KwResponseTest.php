@@ -5,7 +5,7 @@ namespace ClientTests;
 
 use kalanis\RemoteRequest\Protocols;
 use kalanis\RemoteRequest\RequestException;
-use yidas\googleMaps\Clients\KwResponse;
+use kalanis\google_maps\Clients\KwResponse;
 
 
 class KwResponseTest extends AResponse

@@ -1,10 +1,10 @@
 <?php
 
-namespace yidas\googleMaps\Clients\Psr;
+namespace kalanis\google_maps\Clients\Psr;
 
 
 use Psr\Http\Message\UriInterface;
-use yidas\googleMaps\ServiceException;
+use kalanis\google_maps\ServiceException;
 
 
 class SimplifiedUri implements UriInterface

@@ -10,26 +10,26 @@ abstract class AResponse extends CommonTestClass
 {
     const DELIMITER = "\r\n";
 
-    public function responseProvider(): array
+    public static function responseProvider(): array
     {
         return [
-            [$this->getResponseSimple(), 900, 'abcdefghijkl'],
-            [$this->getResponseEmpty(), 901, ''],
-            [$this->getResponseHeaders(), 902, 'abcdefghijkl'],
+            [static::getResponseSimple(), 900, 'abcdefghijkl'],
+            [static::getResponseEmpty(), 901, ''],
+            [static::getResponseHeaders(), 902, 'abcdefghijkl'],
         ];
     }
 
-    protected function getResponseSimple()
+    protected static function getResponseSimple()
     {
         return 'HTTP/0.1 900 KO' . self::DELIMITER . self::DELIMITER . 'abcdefghijkl';
     }
 
-    protected function getResponseEmpty()
+    protected static function getResponseEmpty()
     {
         return 'HTTP/0.1 901 KO';
     }
 
-    protected function getResponseHeaders()
+    protected static function getResponseHeaders()
     {
         return 'HTTP/0.1 902 KO' . self::DELIMITER
             . 'Server: PhpUnit/9.3.0' . self::DELIMITER

@@ -4,9 +4,9 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use yidas\googleMaps\ApiAuth;
-use yidas\googleMaps\ServiceException;
-use yidas\googleMaps\Services;
+use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ServiceException;
+use kalanis\google_maps\Services;
 
 
 class FindTextTest extends CommonTestClass
@@ -43,7 +43,7 @@ class FindTextTest extends CommonTestClass
         $this->assertEquals($result, $lib->findText('foo', $radius, $location));
     }
 
-    public function biasProvider(): array
+    public static function biasProvider(): array
     {
         return [
             [['query' => 'foo', 'radius' => '70.00', 'location' => '10.70000000,11.40000000', 'key' => 'test',], 70, [10.7, 11.4]],

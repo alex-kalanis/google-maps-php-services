@@ -1,6 +1,6 @@
 <?php
 
-namespace yidas\googleMaps\Services;
+namespace kalanis\google_maps\Services;
 
 /**
  * Google Maps Abstract Service

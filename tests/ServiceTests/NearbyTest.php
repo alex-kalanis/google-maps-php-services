@@ -4,9 +4,9 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use yidas\googleMaps\ApiAuth;
-use yidas\googleMaps\ServiceException;
-use yidas\googleMaps\Services;
+use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ServiceException;
+use kalanis\google_maps\Services;
 
 
 class NearbyTest extends CommonTestClass
@@ -38,7 +38,7 @@ class NearbyTest extends CommonTestClass
         $this->assertEquals($result, $lib->nearby('', $latLng));
     }
 
-    public function serviceLatLngProvider(): array
+    public static function serviceLatLngProvider(): array
     {
         return [
             [['latlng' => '10.70000000,11.40000000', 'key' => 'test',], [10.7, 11.4]],

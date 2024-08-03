@@ -1,6 +1,6 @@
 <?php
 
-namespace yidas\googleMaps;
+namespace kalanis\google_maps;
 
 /**
  * Google Maps PHP Client - API auth params

@@ -7,8 +7,8 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use yidas\googleMaps\Clients\PsrClient;
-use yidas\googleMaps\ServiceException;
+use kalanis\google_maps\Clients\PsrClient;
+use kalanis\google_maps\ServiceException;
 
 
 class PsrClientTest extends \CommonTestClass
@@ -30,7 +30,7 @@ class PsrClientTest extends \CommonTestClass
         $this->assertEquals($result, $lib->request($path, $params, $method, $headers, $body)->getMessageBody());
     }
 
-    public function requestProvider(): array
+    public static function requestProvider(): array
     {
         return [
             ['https://maps.googleapis.com/maps/api/directions/json?destination=Montreal&origin=Toronto'

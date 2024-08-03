@@ -4,7 +4,7 @@ namespace ClientTests;
 
 
 use kalanis\RemoteRequest;
-use yidas\googleMaps\Clients\KwClient;
+use kalanis\google_maps\Clients\KwClient;
 
 
 class KwClientTest extends \CommonTestClass
@@ -25,7 +25,7 @@ class KwClientTest extends \CommonTestClass
         $this->assertEquals($result, $lib->request($path, $params, $method, $headers, $body)->getMessageBody());
     }
 
-    public function requestProvider(): array
+    public static function requestProvider(): array
     {
         return [
             ['ssl://---maps.googleapis.com---443---5'

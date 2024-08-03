@@ -4,9 +4,9 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use yidas\googleMaps\ApiAuth;
-use yidas\googleMaps\ServiceException;
-use yidas\googleMaps\Services;
+use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ServiceException;
+use kalanis\google_maps\Services;
 
 
 class FindPlaceTest extends CommonTestClass
@@ -51,7 +51,7 @@ class FindPlaceTest extends CommonTestClass
         $this->assertEquals($result, $lib->findPlace('foo', 'bar', [], $bias));
     }
 
-    public function biasProvider(): array
+    public static function biasProvider(): array
     {
         return [
             [['input' => 'foo', 'inputtype' => 'bar', 'locationbias' => 'ipbias', 'key' => 'test',], []],

@@ -1,6 +1,6 @@
 <?php
 
-namespace yidas\googleMaps\Clients;
+namespace kalanis\google_maps\Clients;
 
 use Exception;
 use GuzzleHttp\Client as HttpClient;

@@ -3,7 +3,7 @@
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
-use yidas\googleMaps\Clients\PhpResponse;
+use kalanis\google_maps\Clients\PhpResponse;
 
 
 /**

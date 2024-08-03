@@ -1,11 +1,11 @@
 <?php
 
-namespace yidas\googleMaps\Services;
+namespace kalanis\google_maps\Services;
 
 use ReflectionClass;
 use ReflectionException;
-use yidas\googleMaps\ApiAuth;
-use yidas\googleMaps\ServiceException;
+use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ServiceException;
 
 /**
  * Google Maps PHP Client - factory to get services
@@ -66,7 +66,7 @@ class ServiceFactory
         $instance = $reflection->newInstance($this->apiAuth);
 
         if (!$instance instanceof AbstractService) {
-            throw new ServiceException("Service *{$service}* is not an instance of \yidas\GoogleMaps\Services\AbstractService", 400);
+            throw new ServiceException("Service *{$service}* is not an instance of \kalanis\google_maps\Services\AbstractService", 400);
         }
 
         return $instance;

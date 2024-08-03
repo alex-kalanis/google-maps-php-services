@@ -3,7 +3,7 @@
 namespace ClientTests;
 
 
-use yidas\googleMaps\Clients\PhpResponse;
+use kalanis\google_maps\Clients\PhpResponse;
 
 
 class PhpResponseTest extends AResponse

@@ -1,6 +1,6 @@
 <?php
 
-namespace yidas\googleMaps\Clients\Psr;
+namespace kalanis\google_maps\Clients\Psr;
 
 
 use RuntimeException;

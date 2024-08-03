@@ -4,8 +4,8 @@ namespace ClientTests;
 
 
 use RuntimeException;
-use yidas\googleMaps\Clients\Psr;
-use yidas\googleMaps\ServiceException;
+use kalanis\google_maps\Clients\Psr;
+use kalanis\google_maps\ServiceException;
 
 
 class PsrSimplifiedTest extends \CommonTestClass

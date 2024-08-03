@@ -4,9 +4,9 @@ namespace ServiceTests;
 
 
 use CommonTestClass;
-use yidas\googleMaps\ApiAuth;
-use yidas\googleMaps\ServiceException;
-use yidas\googleMaps\Services;
+use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ServiceException;
+use kalanis\google_maps\Services;
 
 
 class DirectionsTest extends CommonTestClass

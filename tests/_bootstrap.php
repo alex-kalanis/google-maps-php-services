@@ -1,7 +1,7 @@
 <?php
 
-define('AUTHOR_NAME', 'yidas');
-define('PROJECT_NAME', 'googleMaps');
+define('AUTHOR_NAME', 'kalanis');
+define('PROJECT_NAME', 'google_maps');
 define('PROJECT_DIR', 'src');
 
 $composter = realpath(__DIR__ . '/../vendor/autoload.php');
@@ -11,4 +11,3 @@ if ($composter) {
 }
 
 require_once __DIR__ . '/_autoload.php';
-require_once __DIR__ . '/CommonTestClass.php';

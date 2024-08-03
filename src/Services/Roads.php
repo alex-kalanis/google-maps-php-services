@@ -1,9 +1,9 @@
 <?php
 
-namespace yidas\googleMaps\Services;
+namespace kalanis\google_maps\Services;
 
 
-use yidas\googleMaps\ServiceException;
+use kalanis\google_maps\ServiceException;
 
 /**
  * Roads Service

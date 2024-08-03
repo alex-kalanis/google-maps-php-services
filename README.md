@@ -6,13 +6,24 @@
     <br>
 </p>
 
-PHP client library(SDK) for Google Maps API Web Services
+PHP client library(SDK) for Google Maps API Web Services.
 
-[![Latest Stable Version](https://poser.pugx.org/yidas/google-maps-services/v/stable?format=flat-square)](https://packagist.org/packages/yidas/google-maps-services)
-[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%207.4-8892BF.svg)](https://php.net/)
-[![License](https://poser.pugx.org/yidas/google-maps-services/license?format=flat-square)](https://packagist.org/packages/yidas/google-maps-services)
-[![Total Downloads](https://poser.pugx.org/yidas/google-maps-services/downloads?format=flat-square)](https://packagist.org/packages/yidas/google-maps-services)
-[![Monthly Downloads](https://poser.pugx.org/yidas/google-maps-services/d/monthly?format=flat-square)](https://packagist.org/packages/yidas/google-maps-services)
+Fork of older Nick Tsai's library.
+
+![Build Status](https://github.com/alex-kalanis/google-maps-php-services/actions/workflows/code_checks.yml/badge.svg)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/alex-kalanis/google-maps-php-services/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/alex-kalanis/google-maps-php-services/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/alex-kalanis/google-maps-php-services/v/stable.svg?v=1)](https://packagist.org/packages/alex-kalanis/google-maps-php-services)
+[![Minimum PHP Version](https://img.shields.io/badge/php-%3E%3D%208.1-8892BF.svg)](https://php.net/)
+[![Downloads](https://img.shields.io/packagist/dt/alex-kalanis/google-maps-php-services.svg?v1)](https://packagist.org/packages/alex-kalanis/google-maps-php-services)
+[![License](https://poser.pugx.org/alex-kalanis/google-maps-php-services/license.svg?v=1)](https://packagist.org/packages/alex-kalanis/google-maps-php-services)
+[![Code Coverage](https://scrutinizer-ci.com/g/alex-kalanis/google-maps-php-services/badges/coverage.png?b=master&v=1)](https://scrutinizer-ci.com/g/alex-kalanis/google-maps-php-services/?branch=master)
+
+### Differences:
+
+- Minimal php is 8.1
+- Type checks
+- Dependency injection
+- With PSR and other remote libraries than Guzzle/Curl in mind
 
 
 OUTLINE
@@ -41,31 +52,116 @@ OUTLINE
 
 ---
 
-DEMONSTRATION
--------------
+## DEMONSTRATION
 
+For nearly raw php / custom frameworks:
 
 ```php
-$gmaps = new \yidas\googleMaps\Client(['key'=>'Your API Key']);
+// somewhere in configuration something like this
+$gmaps = new \kalanis\google_maps\ConfigClient('Your API Key');
 
-// Geocoding an address
-$geocodeResult = $gmaps->geocode('Taipei 101, Taipei City, Taiwan 110');
+// then on desired pages
 
-// Look up an address with reverse geocoding
-$reverseGeocodeResult = $gmaps->reverseGeocode([25.0339639, 121.5644722]);
+class YourPresenter extends YourFramework
+{
+    public function __construct(
+    // ... other classes
+        protected kalanis\google_maps\Service $mapService,
+    ) {
+    }
 
-// Request directions via public transit
-$directionsResult = $gmaps->directions('National Palace Museum', 'Taipei 101', [
-    'mode' => "transit",
-    'departure_time' => time(),
-    ]);
+    public function process(): void
+    {
+        // Geocoding an address
+        $geocodeResult = $this->mapService->geocode('Pelješki most, Croatia');
+
+        // Look up an address with reverse geocoding
+        $reverseGeocodeResult = $this->mapService->reverseGeocode(42.916667, 17.533333);
+
+        // Request directions via public transit
+        $directionsResult = $this->mapService->directions('Ploče', 'Dubrovnik', [
+            'mode' => "transit",
+            'departure_time' => time(),
+        ]);
+    }
+}
 ```
+
+For [Symfony](https://symfony.com/):
+
+```yaml
+# config/services.yaml
+services:
+  kalanis\google_maps\ConfigClient:
+    arguments: ['Your API Key']
+  kalanis\google_maps\Service:
+    arguments: ['@Psr\Http\Client\ClientInterface', '@kalanis\google_maps\ConfigClient']
+```
+
+```php
+
+namespace App\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Attribute\Route;
+
+#[Route('/your-maps')]
+class YourMapsPresenter extends AbstractController
+{
+    public function __construct(
+    // ... other classes
+        protected kalanis\google_maps\Service $mapService,
+    ) {
+    }
+
+    #[Route('/geocode', name: 'maps_geocode', defaults: ['where' => 'Pelješki most, Croatia'], methods: ['GET'])]
+    public function geocode(Request $request, string $where): Response
+    {
+        $geocodeResult = $this->mapService->geocode($where);
+        return new JsonResponse($geocodeResult)
+    }
+
+    #[Route('/reverse-geocode', lat: '42.916667', lon: '17.533333', defaults: ['lat' => '42.916667', 'lon' => '17.533333'], methods: ['GET'])]
+    public function reverseGeocode(Request $request, string $lat, string $lon): Response
+    {
+        $geocodeResult = $this->mapService->reverseGeocode($lat, $lon);
+        return new JsonResponse($geocodeResult)
+    }
+}
+```
+
+For [Nette](https://nette.org/):
+```neon
+services:
+    # ... other ones
+    - kalanis\google_maps\ConfigClient('Your API Key')
+    # ... other ones
+```
+
+Or with parameters for different servers/services:
+
+```neon
+parameters:
+    # ... other ones
+    googleMapsKey: 'Your API Key'
+    # ... other ones
+
+services:
+    # ... other ones
+    - kalanis\google_maps\ConfigClient(%parameters.googleMapsKey%)
+    # ... other ones
+```
+
+And then in class like in other frameworks with DI.
+
 
 ---
 
 
-DESCRIPTION
------------
+## DESCRIPTION
 
 The PHP Client for Google Maps Services is a PHP Client library for the following [Google Maps APIs](https://developers.google.com/maps):
 
@@ -87,10 +183,9 @@ The PHP Client for Google Maps Services is a PHP Client library for the followin
 
 ---
 
-REQUIREMENTS
-------------
+## REQUIREMENTS
 
-- PHP 7.1+ or higher
+- PHP 8.1+ or higher
 
 ### API keys
 
@@ -123,19 +218,18 @@ For even more information, see the guide to [API keys][apikey].
 
 ---
 
-INSTALLATION
-------------
+## INSTALLATION
 
 Run Composer in your project:
 
-    composer require yidas/google-maps-services
+    composer require alex-kalanis/google-maps-php-services
 
 Then you could call it after Composer is loaded depended on your PHP framework:
 
 ```php
 require __DIR__ . '/vendor/autoload.php';
 
-use yidas\googleMaps\Client;
+use kalanis\google_maps\Client;
 ```
 
 ---
@@ -150,18 +244,10 @@ Before using any Google Maps Services, first you need to create a Client with co
 Create a Client using [API key]((#api-keys)):
 
 ```php
-$gmaps = new \yidas\googleMaps\Client(['key'=>'Your API Key']);
-```
-
-#### Google Maps APIs Premium Plan license
-
-If you use [Google Maps APIs Premium Plan license](https://developers.google.com/maps/documentation/directions/get-api-key#client-id) instead of an API key, you could create Client using client ID and client secret (digital signature) for authentication.
-
-```php
-$gmaps = new \yidas\googleMaps\Client([
-    'clientID' => 'Your client ID',
-    'clientSecret' => 'Your digital signature'
-    ]);
+$gmaps = new \kalanis\google_maps\Service(
+    new \PsrMock\Psr18\Client(),
+    new \kalanis\google_maps\ConfigClient('Your API Key'),
+);
 ```
 
 #### Language
@@ -169,17 +255,13 @@ $gmaps = new \yidas\googleMaps\Client([
 You could set language for Client for all services:
 
 ```php
-$gmaps = new \yidas\googleMaps\Client(['key'=>'Your API Key', 'language'=>'zh-TW']);
+$gmaps = new \kalanis\google_maps\Service(
+    new \PsrMock\Psr18\Client(),
+    new \kalanis\google_maps\ConfigClient('Your API Key', 'pt-br'),
+);
 ```
 
 > [list of supported languages - Google Maps Platform](https://developers.google.com/maps/faq#languagesupport)
-
-Changing language during execution:
-
-```php
-$gmaps->setLanguage('zh-TW');
-// ...
-```
 
 ### APIs
 
@@ -189,8 +271,8 @@ $gmaps->setLanguage('zh-TW');
 
 ```php
 // Get elevation by locations parameter
-$elevationResult = $gmaps->elevation([25.0339639, 121.5644722]);
-$elevationResult = $gmaps->elevation('25.0339639, 121.5644722');
+$elevationResult = $gmaps->elevation(25.0339639, 121.5644722);
+$elevationResult = $gmaps->elevation('25.0339639', '121.5644722');
 ```
 
 #### Routes API
@@ -236,10 +318,10 @@ $roads = $gmaps->snapToRoads([[-35.27801,149.12958], [-35.28032,149.12907], [-35
 
 ```php
 // Request directions via public transit
-$directionsResult = $gmaps->directions('National Palace Museum', 'Taipei 101', [
+$directionsResult = $gmaps->directions('Milano', 'Venezia', [
     'mode' => "transit",
     'departure_time' => time(),
-    ]);
+]);
 ```
 
 
@@ -249,12 +331,12 @@ $directionsResult = $gmaps->directions('National Palace Museum', 'Taipei 101', [
 
 ```php
 // Get the distance matrix data between two places
-$distanceMatrixResult = $gmaps->distanceMatrix('National Palace Museum', 'Taipei 101');
+$distanceMatrixResult = $gmaps->distanceMatrix('Canberra', 'Perth');
 
 // With Imperial units
-$distanceMatrixResult = $gmaps->distanceMatrix('National Palace Museum', 'Taipei 101', [
+$distanceMatrixResult = $gmaps->distanceMatrix('Stonehenge', 'Bristol', [
     'units' => 'imperial',
-    ]);
+]);
 ```
 
 #### Geocoding API
@@ -263,10 +345,10 @@ $distanceMatrixResult = $gmaps->distanceMatrix('National Palace Museum', 'Taipei
 
 ```php
 // Geocoding an address
-$geocodeResult = $gmaps->geocode('Taipei 101, Taipei City, Taiwan 110');
+$geocodeResult = $gmaps->geocode('Avenida Maracanã 350, Rio de Janeiro');
 
 // Look up an address with reverse geocoding
-$reverseGeocodeResult = $gmaps->reverseGeocode([25.0339639, 121.5644722]);
+$reverseGeocodeResult = $gmaps->reverseGeocode(-22.912167, -43.230164);
 ```
 
 #### Geolocation API
@@ -284,7 +366,7 @@ $geolocateResult = $gmaps->geolocate([]);
 
 ```php
 // requests the time zone data for given location
-$timezoneResult = $gmaps->timezone([25.0339639, 121.5644722]);
+$timezoneResult = $gmaps->timezone([25.381111, 83.021389]); // Sárnáth
 ```
 
 ### Nearby API
@@ -293,7 +375,7 @@ $timezoneResult = $gmaps->timezone([25.0339639, 121.5644722]);
 
 ```php
 // requests the nearby points for given location
-$nearbyResult = $gmaps->nearby('restaurant', [25.0339639, 121.5644722]);
+$nearbyResult = $gmaps->nearby('restaurant', [25.71874, 32.6574]); // in Luxor
 ```
 
 ### Find by Place API

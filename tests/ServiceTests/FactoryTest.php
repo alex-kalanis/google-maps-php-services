@@ -5,9 +5,9 @@ namespace ServiceTests;
 
 use CommonTestClass;
 use ReflectionException;
-use yidas\googleMaps\ApiAuth;
-use yidas\googleMaps\ServiceException;
-use yidas\googleMaps\Services;
+use kalanis\google_maps\ApiAuth;
+use kalanis\google_maps\ServiceException;
+use kalanis\google_maps\Services;
 
 
 class FactoryTest extends CommonTestClass
@@ -41,7 +41,7 @@ class FactoryTest extends CommonTestClass
     public function testServiceFailWrongTarget(): void
     {
         $lib = new XFactory(new ApiAuth('test'));
-        $this->expectExceptionMessage('Service *ServiceTests\XClass* is not an instance of \yidas\GoogleMaps\Services\AbstractService');
+        $this->expectExceptionMessage('Service *ServiceTests\XClass* is not an instance of \kalanis\google_maps\Services\AbstractService');
         $this->expectException(ServiceException::class);
         $lib->getService('unusable');
     }

@@ -8,6 +8,8 @@
 # checks
 phpunit
 phpunit-*
+.phpunit.cache
+tests/data/clover.xml
 
 # external libs
 tests/external/

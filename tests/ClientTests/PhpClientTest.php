@@ -3,7 +3,7 @@
 namespace ClientTests;
 
 
-use yidas\googleMaps\Clients\PhpClient;
+use kalanis\google_maps\Clients\PhpClient;
 
 
 class PhpClientTest extends \CommonTestClass
@@ -23,7 +23,7 @@ class PhpClientTest extends \CommonTestClass
         $this->assertEquals($result, $lib->request($path, $params, $method, $headers, $body)->getMessageBody());
     }
 
-    public function requestProvider(): array
+    public static function requestProvider(): array
     {
         return [
             ['https://maps.googleapis.com/maps/api/directions/json?destination=Montreal&origin=Toronto'
