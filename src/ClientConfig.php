@@ -26,7 +26,7 @@ class ClientConfig
      * @throws ServiceException
      * @return self
      */
-    public static function init($optParams): ClientConfig
+    public static function init(string|array $optParams): ClientConfig
     {
         return new self(
             is_array($optParams) && (isset($optParams['key']))

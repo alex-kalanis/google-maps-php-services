@@ -71,4 +71,3 @@ class XClass extends \stdClass
     {
     }
 }
-

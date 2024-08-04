@@ -23,9 +23,6 @@ class LanguageTest extends CommonTestClass
         $this->assertEquals([], $lib->getToQuery('post'));
     }
 
-    /**
-     * @throws ServiceException
-     */
     public function testLangSet(): void
     {
         $lib = new Language(new ClientConfig('wanabe key', 'pt-br'));

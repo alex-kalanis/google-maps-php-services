@@ -182,4 +182,3 @@ class XFactory extends Services\ServiceFactory
         'dummy' => FailingReturn::class,
     ];
 }
-

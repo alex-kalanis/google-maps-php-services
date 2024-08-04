@@ -12,9 +12,6 @@ use kalanis\google_maps\Services;
 
 class GeocodingTest extends CommonTestClass
 {
-    /**
-     * @throws ServiceException
-     */
     public function testServiceGeocode(): void
     {
         $data = $this->getLib()->geocode('somewhere in the land');

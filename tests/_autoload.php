@@ -1,6 +1,6 @@
 <?php
 
-function autoload($className)
+function autoload(string $className): void
 {
     if (!defined('AUTHOR_NAME')) {
         define('AUTHOR_NAME', '.');
