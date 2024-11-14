@@ -12,7 +12,7 @@ use kalanis\google_maps\ClientConfig;
 class Language
 {
     public function __construct(
-        protected ClientConfig $config,
+        protected readonly ClientConfig $config,
     )
     {
     }

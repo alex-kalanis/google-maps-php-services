@@ -29,9 +29,9 @@ abstract class AbstractService
      * @param Language $lang Class to set the language
      */
     public function __construct(
-        protected RequestInterface $request,
-        protected ApiAuth          $auth,
-        protected Language         $lang,
+        protected RequestInterface  $request,
+        protected readonly ApiAuth  $auth,
+        protected readonly Language $lang,
     )
     {
     }

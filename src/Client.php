@@ -28,8 +28,7 @@ use ReflectionException;
  */
 class Client
 {
-    protected Services $services;
-    protected ClientConfig $config;
+    protected readonly Services $services;
 
     /**
      * @param RequestInterface $request
@@ -38,12 +37,11 @@ class Client
      * Each of these three must be available via Dependency Injection
      */
     public function __construct(
-        RequestInterface $request,
-        ClientInterface  $client,
-        ClientConfig     $config,
+        RequestInterface       $request,
+        ClientInterface        $client,
+        protected ClientConfig $config,
     )
     {
-        $this->config = $config;
         $this->services = new Services(
             new Services\ServiceFactory(
                 $request,
@@ -51,7 +49,7 @@ class Client
                 new Remote\Headers\Language($config)
             ),
             $client,
-            new Remote\Response()
+            new Remote\Response(),
         );
     }
 

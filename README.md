@@ -72,7 +72,7 @@ class YourPresenter extends YourFramework
 {
     public function __construct(
         // ... other used classes
-        protected kalanis\google_maps\Client $mapService,
+        protected readonly kalanis\google_maps\Client $mapService,
     ) {
     }
 
@@ -102,7 +102,7 @@ public function register()
     // ... other binds
     $this->app()->bind(\kalanis\google_maps\Client::class, function(
             Psr\Http\Client\ClientInterface $client,
-            Psr\Http\Message\RequestInterface $request
+            Psr\Http\Message\RequestInterface $request,
         ) {
             return new \kalanis\google_maps\Client(
                 $request,
@@ -142,7 +142,7 @@ class YourMapsPresenter extends AbstractController
 {
     public function __construct(
         // ... other used classes
-        protected kalanis\google_maps\Client $mapService,
+        protected readonly kalanis\google_maps\Client $mapService,
     ) {
     }
 
@@ -260,7 +260,7 @@ Run Composer in your project:
 Then you could call it after Composer is loaded depended on your PHP framework:
 
 ```php
-require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
 use kalanis\google_maps\Client;
 ```

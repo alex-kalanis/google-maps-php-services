@@ -15,7 +15,7 @@ class Body implements StreamInterface
     protected int $pointer = 0;
 
     public function __construct(
-        protected string $content = ''
+        protected string $content = '',
     )
     {
     }

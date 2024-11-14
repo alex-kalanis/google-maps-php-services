@@ -30,9 +30,9 @@ use ReflectionException;
 class Services
 {
     public function __construct(
-        protected ServiceFactory  $factory,
-        protected ClientInterface $client,
-        protected Response        $response,
+        protected readonly ServiceFactory  $factory,
+        protected readonly ClientInterface $client,
+        protected readonly Response        $response,
     )
     {
     }

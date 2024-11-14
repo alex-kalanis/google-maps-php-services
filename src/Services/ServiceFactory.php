@@ -38,24 +38,31 @@ class ServiceFactory
     ];
 
     public function __construct(
-        protected RequestInterface $request,
-        protected ApiAuth          $apiAuth,
-        protected Language         $lang,
+        protected readonly RequestInterface $request,
+        protected readonly ApiAuth          $apiAuth,
+        protected readonly Language         $lang,
     )
     {
     }
 
     /**
-     * @param string $method
+     * @param string|object $method
      * @throws ReflectionException
      * @throws ServiceException
      * @return AbstractService
      */
-    public function getService(string $method): AbstractService
+    public function getService(string|object $method): AbstractService
     {
+        if (is_object($method)) {
+            if (!is_a($method, AbstractService::class)) {
+                throw new ServiceException(sprintf('Service *%s* is not an instance of \kalanis\google_maps\Services\AbstractService', $method::class), 400);
+            }
+            return $method;
+        }
+
         // Matching self::$serviceMethodMap is required
         if (!isset($this->serviceMethodMap[$method])) {
-            throw new ServiceException("Call to undefined service method *{$method}*", 400);
+            throw new ServiceException(sprintf('Call to undefined service method *%s*', $method), 400);
         }
 
         // Get the service mapped by method
@@ -65,7 +72,7 @@ class ServiceFactory
         $instance = $reflection->newInstance($this->request, $this->apiAuth, $this->lang);
 
         if (!$instance instanceof AbstractService) {
-            throw new ServiceException("Service *{$service}* is not an instance of \kalanis\google_maps\Services\AbstractService", 400);
+            throw new ServiceException(sprintf('Service *%s* is not an instance of \kalanis\google_maps\Services\AbstractService', $service), 400);
         }
 
         return $instance;

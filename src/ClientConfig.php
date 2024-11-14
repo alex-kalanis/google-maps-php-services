@@ -9,8 +9,8 @@ namespace kalanis\google_maps;
 class ClientConfig
 {
     public function __construct(
-        protected string      $apiKey,
-        protected string|null $language = null,
+        protected readonly string $apiKey,
+        protected string|null     $language = null,
     )
     {
     }

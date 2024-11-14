@@ -26,6 +26,22 @@ class FactoryTest extends CommonTestClass
      * @throws ServiceException
      * @throws ReflectionException
      */
+    public function testServiceOkPassedTarget(): void
+    {
+        $conf = new ClientConfig('test');
+        $request = new \XRequest();
+        $apiAuth = new Headers\ApiAuth($conf);
+        $lang = new Headers\Language($conf);
+        $this->assertNotEmpty(
+            (new XFactory($request, $apiAuth, $lang, ))
+                ->getService(new Services\Directions($request, $apiAuth, $lang, ))
+        );
+    }
+
+    /**
+     * @throws ServiceException
+     * @throws ReflectionException
+     */
     public function testServiceFailNoTarget(): void
     {
         $this->expectExceptionMessage('Call to undefined service method *unknown one*');
@@ -42,6 +58,17 @@ class FactoryTest extends CommonTestClass
         $this->expectExceptionMessage('Service *ServiceTests\XClass* is not an instance of \kalanis\google_maps\Services\AbstractService');
         $this->expectException(ServiceException::class);
         $this->getLib()->getService('unusable');
+    }
+
+    /**
+     * @throws ServiceException
+     * @throws ReflectionException
+     */
+    public function testServiceFailWrongServicePassed(): void
+    {
+        $this->expectExceptionMessage('Service *ServiceTests\XClass* is not an instance of \kalanis\google_maps\Services\AbstractService');
+        $this->expectException(ServiceException::class);
+        $this->getLib()->getService(new XClass([]));
     }
 
     protected function getLib(): Services\ServiceFactory

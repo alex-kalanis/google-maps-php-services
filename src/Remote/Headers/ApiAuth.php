@@ -12,7 +12,7 @@ use kalanis\google_maps\ClientConfig;
 class ApiAuth
 {
     public function __construct(
-        protected ClientConfig $config,
+        protected readonly ClientConfig $config,
     )
     {
     }
