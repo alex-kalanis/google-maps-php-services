@@ -1,9 +1,9 @@
 <?php
 
-namespace ServiceTests;
+namespace tests\ServiceTests;
 
 
-use CommonTestClass;
+use tests\CommonTestClass;
 use kalanis\google_maps\ClientConfig;
 use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
@@ -82,6 +82,6 @@ class FindPlaceTest extends CommonTestClass
     protected function getLib(): Services\FindPlace
     {
         $conf = ClientConfig::init('test');
-        return new Services\FindPlace(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
+        return new Services\FindPlace(new \tests\XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
     }
 }

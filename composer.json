@@ -25,5 +25,10 @@
         "psr-4": {
             "kalanis\\google_maps\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "tests\\": "tests/"
+        }
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+namespace tests;
+
+
 use PHPUnit\Framework\TestCase;
 use kalanis\google_maps\Remote\Body;
 use Psr\Http\Client\ClientInterface;

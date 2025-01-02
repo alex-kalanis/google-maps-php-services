@@ -1,9 +1,9 @@
 <?php
 
-namespace RemoteTests;
+namespace tests\RemoteTests;
 
 
-use CommonTestClass;
+use tests\CommonTestClass;
 use kalanis\google_maps\ClientConfig;
 use kalanis\google_maps\Remote\Headers\ApiAuth;
 use kalanis\google_maps\ServiceException;

@@ -1,9 +1,9 @@
 <?php
 
-namespace ServiceTests;
+namespace tests\ServiceTests;
 
 
-use CommonTestClass;
+use tests\CommonTestClass;
 use kalanis\google_maps\ClientConfig;
 use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
@@ -18,7 +18,7 @@ class DirectionsTest extends CommonTestClass
     public function testService(): void
     {
         $conf = ClientConfig::init('test');
-        $lib = new Services\Directions(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
+        $lib = new Services\Directions(new \tests\XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
         $data = $lib->directions('you do not know where', 'you do not want to know');
         $this->assertEquals('https://maps.googleapis.com/maps/api/directions/json?key=test&origin=you%20do%20not%20know%20where&destination=you%20do%20not%20want%20to%20know', strval($data->getUri()));
         $this->assertEquals('', $data->getBody());

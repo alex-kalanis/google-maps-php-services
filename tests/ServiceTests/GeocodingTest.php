@@ -1,9 +1,9 @@
 <?php
 
-namespace ServiceTests;
+namespace tests\ServiceTests;
 
 
-use CommonTestClass;
+use tests\CommonTestClass;
 use kalanis\google_maps\ClientConfig;
 use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
@@ -66,6 +66,6 @@ class GeocodingTest extends CommonTestClass
     protected function getLib(): Services\Geocoding
     {
         $conf = ClientConfig::init('test');
-        return new Services\Geocoding(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
+        return new Services\Geocoding(new \tests\XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
     }
 }

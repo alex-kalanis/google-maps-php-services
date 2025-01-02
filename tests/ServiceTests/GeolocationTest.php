@@ -1,9 +1,9 @@
 <?php
 
-namespace ServiceTests;
+namespace tests\ServiceTests;
 
 
-use CommonTestClass;
+use tests\CommonTestClass;
 use kalanis\google_maps\ClientConfig;
 use kalanis\google_maps\Remote;
 use kalanis\google_maps\ServiceException;
@@ -18,7 +18,7 @@ class GeolocationTest extends CommonTestClass
     public function testService(): void
     {
         $conf = ClientConfig::init('test');
-        $lib = new Services\Geolocation(new \XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
+        $lib = new Services\Geolocation(new \tests\XRequest(), new Remote\Headers\ApiAuth($conf), new Remote\Headers\Language($conf));
 
         $data = $lib->geolocate([10.7, 11.4, 'foo' => 'bar']);
         $this->assertEquals('POST', $data->getMethod());

@@ -1,9 +1,9 @@
 <?php
 
-namespace BasicTests;
+namespace tests\BasicTests;
 
 
-use CommonTestClass;
+use tests\CommonTestClass;
 use kalanis\google_maps\Client;
 use kalanis\google_maps\ClientConfig;
 use kalanis\google_maps\Remote\Headers\ApiAuth;
@@ -20,12 +20,12 @@ class ServiceTest extends CommonTestClass
         $conf = new ClientConfig('test');
         $lib = new Services(
             new Services\ServiceFactory(
-                new \XRequest(),
+                new \tests\XRequest(),
                 new ApiAuth($conf),
                 new Language($conf)
             ),
-            new \XMockedResponse(
-                new \XResponse(
+            new \tests\XMockedResponse(
+                new \tests\XResponse(
                     200,
                     'dummy response from remote service',
                 )
@@ -40,12 +40,12 @@ class ServiceTest extends CommonTestClass
         $conf = new ClientConfig('test');
         $lib = new Services(
             new Services\ServiceFactory(
-                new \XRequest(),
+                new \tests\XRequest(),
                 new ApiAuth($conf),
                 new Language($conf)
             ),
-            new \XMockedResponse(
-                new \XResponse(
+            new \tests\XMockedResponse(
+                new \tests\XResponse(
                     400,
                     '{"error": "Unable to show"}',
                 )
@@ -62,12 +62,12 @@ class ServiceTest extends CommonTestClass
         $conf = new ClientConfig('test');
         $lib = new Services(
             new Services\ServiceFactory(
-                new \XRequest(),
+                new \tests\XRequest(),
                 new ApiAuth($conf),
                 new Language($conf)
             ),
-            new \XMockedResponse(
-                new \XResponse(
+            new \tests\XMockedResponse(
+                new \tests\XResponse(
                     200,
                     '{"error_message": "Unable to show"}',
                 )
@@ -84,19 +84,19 @@ class ServiceTest extends CommonTestClass
         $conf = new ClientConfig('test');
         $lib = new Services(
             new XFactory(
-                new \XRequest(),
+                new \tests\XRequest(),
                 new ApiAuth($conf),
                 new Language($conf)
             ),
-            new \XMockedResponse(
-                new \XResponse(
+            new \tests\XMockedResponse(
+                new \tests\XResponse(
                     200,
                     '{"error_message": "Unable to show"}',
                 )
             ),
             new Response()
         );
-        $this->expectExceptionMessage('Call *BasicTests\FailingReturn::dummy* cannot be used - returns *string*!');
+        $this->expectExceptionMessage('Call *tests\BasicTests\FailingReturn::dummy* cannot be used - returns *string*!');
         $this->expectException(ServiceException::class);
         $lib->dummy();
     }
@@ -106,12 +106,12 @@ class ServiceTest extends CommonTestClass
         $conf = new ClientConfig('test');
         $lib = new Services(
             new Services\ServiceFactory(
-                new \XRequest(),
+                new \tests\XRequest(),
                 new ApiAuth($conf),
                 new Language($conf)
             ),
-            new \XMockedResponse(
-                new \XResponse(
+            new \tests\XMockedResponse(
+                new \tests\XResponse(
                     200,
                     '{"status": "Show now"}',
                 )
@@ -128,12 +128,12 @@ class ServiceTest extends CommonTestClass
         $conf = new ClientConfig('test');
         $lib = new Services(
             new Services\ServiceFactory(
-                new \XRequest(),
+                new \tests\XRequest(),
                 new ApiAuth($conf),
                 new Language($conf)
             ),
-            new \XMockedResponse(
-                new \XResponse(
+            new \tests\XMockedResponse(
+                new \tests\XResponse(
                     200,
                     '{"results": ["a", "b"]}',
                 )
@@ -149,9 +149,9 @@ class ServiceTest extends CommonTestClass
     public function testClientRun(): void
     {
         $lib = new Client(
-            new \XRequest(),
-            new \XMockedResponse( // mocked remote response which returns known values
-                new \XResponse(
+            new \tests\XRequest(),
+            new \tests\XMockedResponse( // mocked remote response which returns known values
+                new \tests\XResponse(
                     200,
                     '{"results": ["a", "b"]}',
                 )
