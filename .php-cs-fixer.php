@@ -3,8 +3,11 @@
 declare(strict_types=1);
 
 $finder = PhpCsFixer\Finder::create()
-    ->exclude('php-tests/data')
-    ->in(__DIR__);
+    ->exclude('tests' . DIRECTORY_SEPARATOR . 'data')
+    ->exclude('tests' . DIRECTORY_SEPARATOR . 'external')
+    ->exclude('vendor')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'src')
+    ->in(__DIR__ . DIRECTORY_SEPARATOR . 'tests');
 
 $config = new PhpCsFixer\Config();
 $config

@@ -81,20 +81,3 @@ class FactoryTest extends CommonTestClass
         );
     }
 }
-
-
-class XFactory extends Services\ServiceFactory
-{
-    protected array $serviceMethodMap = [
-        'directions' => Services\Directions::class,
-        'unusable' => XClass::class,
-    ];
-}
-
-
-class XClass extends \stdClass
-{
-    public function __construct($param)
-    {
-    }
-}

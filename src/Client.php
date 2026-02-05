@@ -12,19 +12,19 @@ use ReflectionException;
 /**
  * Google Maps PHP Client - facade for processing
  *
- * @method array|string directions(string $origin, string $destination, array $params = [])
- * @method array|string distanceMatrix(string $origin, string $destination, array $params = [])
- * @method array|string elevation(string $locations, array $params = [])
- * @method array|string geocode(string $address, array $params = [])
- * @method array|string reverseGeocode(string $lat, string $lng, array $params = [])
- * @method array|string computeRoutes(array $origin, array $destination, array $body = [], array $headers = [], array $params = [])
- * @method array|string geolocate(array $bodyParams = [])
- * @method array|string timezone(string $location, string|null $timestamp = null, array $params = [])
- * @method array|string nearby(string $keyword, float[] $latlng, float|null $radius = null, string|null $type = null, array $params = [])
- * @method array|string findPlace(string $input, string $inputType, string[] $fields = [], float[]|null $bias = null, array $params = [])
- * @method array|string findText(string $query, float $radius, float[] $location = [], int|null $maxPrice = null, int|null $minPrice = null, bool $openNow = false, string|null $region = null, string|null $type = null, array $params = [])
- * @method array|string placeDetails(string $placeId, string[] $fields = [], string $region = null, bool $translateReviews = true, string $sortReviews = null, array $params = [])
- * @method array|string snapToRoads(array|string|null $path, array $params = [])
+ * @method array<mixed>|string directions(string $origin, string $destination, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string distanceMatrix(string $origin, string $destination, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string elevation(string|array<string|int, float> $locations, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string geocode(string|null $address, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string reverseGeocode(array<string|float>|string $latlng, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string computeRoutes(array<mixed> $origin, array<mixed> $destination, array<mixed> $body = [])
+ * @method array<mixed>|string geolocate(array<mixed> $bodyParams = [])
+ * @method array<mixed>|string timezone(string|array<string> $location, int|null $timestamp = null, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string nearby(string $keyword, array<string|int, float> $latlng, float|null $radius = null, string|null $type = null, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string findPlace(string $input, string $inputType, string[] $fields = [], array<string|int, float>|null $bias = null, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string findText(string $query, float $radius, array<string|int, float> $location = [], int<0,4>|null $maxPrice = null, int<0,4>|null $minPrice = null, bool $openNow = false, string|null $region = null, string|null $type = null, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string placeDetails(string $placeId, string[] $fields = [], string|null $region = null, bool $translateReviews = true, string|null $sortReviews = null, array<string, string|int|float> $params = [])
+ * @method array<mixed>|string snapToRoads(array<int, float[]>|string|null $path, array<string, string|int|float> $params = [])
  */
 class Client
 {

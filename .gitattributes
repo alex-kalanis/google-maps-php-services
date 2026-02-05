@@ -3,3 +3,12 @@
 # Ignore stuff for export
 /tests                  export-ignore
 /.github                export-ignore
+/doc                    export-ignore
+/examples               export-ignore
+/phpdocker              export-ignore
+/phpstan.neon           export-ignore
+/phpunit.xml            export-ignore
+/.php-cs-fixer.php      export-ignore
+/.gitattributes         export-ignore
+/.gitignore             export-ignore
+/.scrutinizer.yml       export-ignore

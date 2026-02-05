@@ -165,20 +165,3 @@ class ServiceTest extends CommonTestClass
         ], $lib->directions('foo', 'bar'));
     }
 }
-
-
-class FailingReturn extends Services\AbstractService
-{
-    public function dummy(): string
-    {
-        return 'this is not a request';
-    }
-}
-
-
-class XFactory extends Services\ServiceFactory
-{
-    protected array $serviceMethodMap = [
-        'dummy' => FailingReturn::class,
-    ];
-}
