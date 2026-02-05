@@ -3,7 +3,7 @@
 namespace tests;
 
 
-use external\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\UriInterface;
 
 
 class XUri implements UriInterface

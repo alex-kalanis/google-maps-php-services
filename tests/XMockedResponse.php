@@ -3,9 +3,9 @@
 namespace tests;
 
 
-use external\Psr\Http\Client\ClientInterface;
-use external\Psr\Http\Message\RequestInterface;
-use external\Psr\Http\Message\ResponseInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 
 class XMockedResponse implements ClientInterface

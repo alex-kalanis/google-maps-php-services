@@ -4,9 +4,9 @@ namespace tests;
 
 
 use kalanis\google_maps\Remote\Body;
-use external\Psr\Http\Message\MessageInterface;
-use external\Psr\Http\Message\ResponseInterface;
-use external\Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\StreamInterface;
 
 
 class XResponse implements ResponseInterface

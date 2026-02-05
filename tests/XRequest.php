@@ -4,10 +4,10 @@ namespace tests;
 
 
 use kalanis\google_maps\Remote\Body;
-use external\Psr\Http\Message\MessageInterface;
-use external\Psr\Http\Message\RequestInterface;
-use external\Psr\Http\Message\StreamInterface;
-use external\Psr\Http\Message\UriInterface;
+use Psr\Http\Message\MessageInterface;
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 
 class XRequest implements RequestInterface
