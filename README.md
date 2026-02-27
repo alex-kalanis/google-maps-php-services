@@ -100,10 +100,10 @@ For [Laravel](https://laravel.com/):
 public function register()
 {
     // ... other binds
-    $this->app()->bind(\kalanis\google_maps\Client::class, function(
-            Psr\Http\Client\ClientInterface $client,
-            Psr\Http\Message\RequestInterface $request,
-        ) {
+    $this->app->bind(\kalanis\google_maps\Client::class, function(
+            \Psr\Http\Client\ClientInterface $client,
+            \Psr\Http\Message\RequestInterface $request,
+        ): \kalanis\google_maps\Client {
             return new \kalanis\google_maps\Client(
                 $request,
                 $client,

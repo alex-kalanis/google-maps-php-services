@@ -4,6 +4,7 @@
 # Setuptools, their dist folder
 /build/
 /dist/
+/badges/
 
 # checks
 phpunit
