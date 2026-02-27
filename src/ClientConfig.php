@@ -31,7 +31,7 @@ class ClientConfig
         return new self(
             is_array($optParams) && (isset($optParams['key']))
                 ? strval($optParams['key'])
-                : (is_string($optParams)
+                : (!is_array($optParams)
                 ? $optParams
                 : throw new ServiceException('Unable to set Client credential due to your wrong params', 400)
             ),
