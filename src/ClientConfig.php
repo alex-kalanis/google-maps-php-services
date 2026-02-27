@@ -29,12 +29,12 @@ class ClientConfig
     public static function init(string|array $optParams): ClientConfig
     {
         return new self(
-            is_array($optParams) && (isset($optParams['key']))
-                ? strval($optParams['key'])
-                : (!is_array($optParams)
-                ? $optParams
-                : throw new ServiceException('Unable to set Client credential due to your wrong params', 400)
-            ),
+            is_array($optParams)
+                ? (isset($optParams['key'])
+                    ? strval($optParams['key'])
+                    : throw new ServiceException('Unable to set Client credential due to your wrong params', 400)
+                )
+                : $optParams,
             is_array($optParams) && (isset($optParams['language'])) ? strval($optParams['language']) : null,
         );
     }
